@@ -20,6 +20,8 @@ hostname = subprocess.Popen(['hostname'], stdout=subprocess.PIPE, close_fds=True
         .communicate()[0].rstrip()
 
 if hostname in _coordinators.keys():
+    #copy get_rtt
+    subprocess.Popen(['cp', 'yanoama/monitoring/get_rtt.py','./'], stdout=subprocess.PIPE, close_fds=True)
 #    print "inside"
     mystring = str(_coordinators[hostname])+"       */6     *       *       *       cd ~/yanoama && python get_rtt.py > output.log 2>&1"
 #    print mystring

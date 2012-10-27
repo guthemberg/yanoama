@@ -20,9 +20,9 @@ hostname = subprocess.Popen(['hostname'], stdout=subprocess.PIPE, close_fds=True
         .communicate()[0].rstrip()
 
 if hostname in _coordinators.keys():
-    print "inside"
-    mystring = str(_coordinators[hostname])+"       */6     *       *       *       cd ~/aren && python get_rtt.py > output.log 2>&1"
-    print mystring
+#    print "inside"
+    mystring = str(_coordinators[hostname])+"       */6     *       *       *       cd ~/yanoama && python get_rtt.py > output.log 2>&1"
+#    print mystring
     echo = subprocess.Popen(['echo', mystring], stdout=subprocess.PIPE, close_fds=True)
     install_cron_output = subprocess.Popen(['crontab'], stdin=echo.stdout, stdout=subprocess.PIPE, close_fds=True)
 

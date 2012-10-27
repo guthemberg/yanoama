@@ -14,11 +14,12 @@ except Exception, e:
     raise e
 
 
-_backend = config.get('coordinators', {})
-
-print _backend.keys()
+_coordinators = config.get('coordinators', {})
 
 hostname = subprocess.Popen(['hostname'], stdout=subprocess.PIPE, close_fds=True)\
-        .communicate()[0]
+        .communicate()[0].rstrip()
 
-print hostname
+if hostname in _coordinators.keys():
+    print "inside"
+else:
+    print "outside"

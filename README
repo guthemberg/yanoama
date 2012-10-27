@@ -9,3 +9,5 @@ some scripts, notably update_slice.py, require a ple.conf file with planetlab ac
 username = email
 password = password
 host=api_hostname
+
+#mod

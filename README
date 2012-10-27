@@ -1,0 +1,11 @@
+this is draft for the new deployment in planetlab
+	yanoama/planetlab/planetlab.py: library for planetlab API
+	yanoama/planetlab/update_slice.py: updates 'expires' time for eight more weeks
+	yanoama/monitoring/get_rtt.py: main script for getting rtt from a planetlab nodes based on a list of destinations nodes (e.g. ple_nodes.pck)
+	yanoama/system/get_rtt.sh: sript that runs ping. five icmp probe packets are sent to measure rtt
+	
+some scripts, notably update_slice.py, require a ple.conf file with planetlab account credentials in the following format:
+#config/ple.conf: information for PlanetLab API
+username = email
+password = password
+host=api_hostname

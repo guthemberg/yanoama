@@ -51,7 +51,7 @@ def getRTT(hostname):
         # subprocess.check_output(["sh get_rtt.sh "+hostname],stderr=subprocess.STDOUT,shell=True)
         #print "sh get_rtt.sh "+hostname
         #print Popen("sh get_rtt.sh "+hostname, stdout=PIPE,shell=True).communicate()[0]
-        return (float(Popen("sh get_rtt.sh "+hostname, stdout=PIPE,shell=True).communicate()[0]))
+        return (float(Popen("sh yanoama/system/get_rtt.sh "+hostname, stdout=PIPE,shell=True).communicate()[0]))
     except:
         #raise
         return -1

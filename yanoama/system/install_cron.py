@@ -14,4 +14,4 @@ except Exception, e:
 
 _backend = config.get('coordinators', {})
 
-print _backend
+print _backend.keys()

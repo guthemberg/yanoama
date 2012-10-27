@@ -4,6 +4,8 @@ try:
 except ImportError:
     import simplejson as json
 
+import subprocess
+
 try:
     config_file = file('/etc/yanoama.conf').read()
     config = json.loads(config_file)
@@ -15,3 +17,8 @@ except Exception, e:
 _backend = config.get('coordinators', {})
 
 print _backend.keys()
+
+hostname = subprocess.Popen(['hostname'], stdout=subprocess.PIPE, close_fds=True)\
+        .communicate()[0]
+
+print hostname

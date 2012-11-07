@@ -8,12 +8,12 @@ class PlanetLabAPI:
     auth=None
     api=None
     
-    def __init__(self,host,username,password):
+    def __init__(self,username,password,host,port=443):
         self.auth = { 'AuthMethod' : 'password',
                  'Username' : username,
                  'AuthString' : password
         }
-        self.api=xmlrpclib.ServerProxy("https://%s:443/PLCAPI/"%host,allow_none=True)
+        self.api=xmlrpclib.ServerProxy("https://%s:%d/PLCAPI/"%(host,port),allow_none=True)
 
     def getPLEHostnames(self):
         return (self.api.GetNodes(self.auth,{'peer_id':None},['hostname']))
@@ -21,11 +21,33 @@ class PlanetLabAPI:
     def getHostnames(self):
         return (self.api.GetNodes(self.auth,None,['hostname']))
 
+    def getNodesIdsAndNames(self):
+        nodes=(self.api.GetNodes(self.auth,None,['node_id','hostname']))
+        nodes_dic={}
+        for node in nodes:
+            nodes_dic[node['node_id']]=node['hostname']
+        return nodes_dic
+
     def getPLCHostnames(self):
         return (self.api.GetNodes(self.auth,{'peer_id':1},['hostname']))
 
+    def getSliceHostnames(self,slice_name):
+        node_ids = (self.api.GetSlices(self.auth,slice_name,['node_ids']))[0]['node_ids']
+        nodes_dic=self.getNodesIdsAndNames()
+        #print nodes_dic.keys()
+        #print len(nodes_dic.keys())
+        #print node_ids
+        hostnames=[]
+        for node_id in nodes_dic.keys():
+            if node_id in node_ids:
+                hostnames.append(nodes_dic[node_id])
+        return hostnames
+
     def update(self,expire_time):
         return (self.api.UpdateSlice(self.auth,'upmc_aren',{'expires':expire_time}))
+
+    def updateSliceNodes(self,slice_name,nodes):
+        return (self.api.UpdateSlice(self.auth,slice_name,{'nodes':nodes}))
     
 class MyOps:
     status_table=None

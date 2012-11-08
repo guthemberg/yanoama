@@ -72,8 +72,10 @@ def get_current_nodes(api,slice_name):
 def download_nodes_list(hostname):
     nodes_list=[]
     filename='%s/%s'%(TMP_DIR,NODES_DB)
+    config=ConfigObj(PLE_CONF_FILE)
+    key=config['key']
     #try to fetch the nodes db from the remote host
-    subprocess.Popen(['scp', '-q','%s@%s:/home/%s/yanoama/%s'%(USER,hostname,USER,NODES_DB), filename ], stdout=subprocess.PIPE, close_fds=True)
+    subprocess.Popen(['scp', '-q','-i',key,'%s@%s:/home/%s/yanoama/%s'%(USER,hostname,USER,NODES_DB), filename ], stdout=subprocess.PIPE, close_fds=True)
     if os.path.isfile(filename):
         nodes_file = open(filename, "r") # read mode
         dictionary = pickle.load(nodes_file)
@@ -105,6 +107,8 @@ def update_nodes():
     #get PLE API
     api=get_ple_api()
 
+    if len(_coordinators.keys())==0:
+        sys.stdout.write(" no coordinators ")
     for node in _coordinators.keys():
         fresh_nodes_list = download_nodes_list(node)
         if len(fresh_nodes_list)>0:
@@ -118,6 +122,8 @@ def update_nodes():
                 return
 
             break
+        else:
+            sys.stdout.write("empty list in %s... "%(node))
         
     
     #todo: download a list of nodes from coordinators list, then update our nodes list
@@ -127,9 +133,11 @@ def update_nodes():
 if __name__ == '__main__':
     print "[%s]:update slice..."%(str(datetime.now()))
     
+    config=ConfigObj(PLE_CONF_FILE)
+    key=config['key']
     if is_at_orange_labs():
         #run a tunnel in background
-        subprocess.Popen(['ssh', '-f', '-L',TUNNEL,'%s@%s'%(USER,SSH_PROXY), '-N' ], stdout=subprocess.PIPE, close_fds=True)
+        subprocess.Popen(['ssh','-f','-i',key,'-L',TUNNEL,'%s@%s'%(USER,SSH_PROXY),'-N' ], stdout=subprocess.PIPE, close_fds=True)
         #wait five seconds before connecting to the API (for tunnel set-up)
         print "...zzz..."
         time.sleep(5)

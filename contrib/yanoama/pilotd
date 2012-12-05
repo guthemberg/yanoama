@@ -11,7 +11,7 @@ import sys
 import logging
 import SocketServer
 
-sys.path.append('/home/upmc_aren/yanoama/yanoama')
+sys.path.append('/home/upmc_aren/yanoama')
 
 try:
 	from yanoama.pilot.system.daemon import Daemon

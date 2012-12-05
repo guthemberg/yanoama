@@ -4,7 +4,7 @@ HOME=~
 YANOAMA_HOME=${HOME}/yanoama
 cd $HOME
 #remove old installation
-rm -rf yanoama
+rm -rf $YANOAMA_HOME
 #requirement, start cron
 sudo /sbin/service crond start
 #cleanup user cron
@@ -19,10 +19,10 @@ git clone git://github.com/guthemberg/yanoama
 sudo cp ${YANOAMA_HOME}/config/yanoama.conf /etc/
 #install script into the cron and copy get rtt script #cp yanoama/monitoring/get_rtt.py ./
 python ${YANOAMA_HOME}/yanoama/system/install_cron.py
-#stop/run pilot
+#run pilot daemon
 sudo mkdir /usr/local/yanoama
 sudo touch /usr/local/yanoama/pilot.log
 chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
-sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd stop
+sudo pkill -f pilotd && sudo rm -rf /var/run/pilotd.pid
 sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
 

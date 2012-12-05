@@ -36,8 +36,9 @@
 #===============================================================================
 
 import sys
+sys.path.append('/home/upmc_aren/yanoama')
 import socket
-from pilot.core import settings
+from yanoama.pilot.core import settings
 from time import gmtime, strftime
 
 

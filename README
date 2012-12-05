@@ -11,3 +11,54 @@ password = password
 host=api_hostname
 
 #more docs
+
+
+
+
+
+##INSATALL pilot module
+
+Pilot - A simple remote console commands runner for aren/planetlab
+----------------
+
+
+(I) How to install the server on planetlab nodes (assuming upmc-aren slice, and homedir /home/upmc_aren).
+
+get pilot.tar.gz (with this README.txt, pilot python package, config and contrib folders.) 
+and copy it into /home/upmc_aren
+
+cd /home/upmc_aren && #get yanoama code# && cd yanoama
+
+sudo mkdir /usr/local/yanoama && sudo touch /usr/local/yanoama/pilot.log
+
+sudo cp yanoama/config/yanoama.conf /etc/
+
+cp contrib/pilot/pilotd ./
+
+chmod +x pilotd
+
+sudo ./pilotd start (for stopping /home/upmc_aren/pilot/pilotd stop)
+
+----------------
+
+
+(II) running the client (for example, for workload master)
+
+get pilot.tar.gz (with this README.txt, pilot python package, config and contrib folders.) and copy into /home/upmc_aren
+
+cd /home/upmc_aren && tar xzf pilot.tar.gz && cd pilot
+
+sudo cp config/pilot.conf /etc/
+
+cp contrib/pilot/client.py ./
+
+python client.py HOST CMD, e.g. get_date
+
+----------------
+
+
+(III) Packaging (example)
+cd /tmp
+tar -C  ~/Documents/workplace/ -cf pilot.tar pilot
+gzip pilot.tar
+scp pilot.tar.gz upmc_aren@plewifi.ipv6.lip6.fr:/home/upmc_aren/

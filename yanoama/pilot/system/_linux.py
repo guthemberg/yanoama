@@ -11,6 +11,7 @@ codes list:
 0,0: update main sources
 0,1: start daemon
 0,2: stop daemon
+9,9: get date for testing
 """
 class LinuxSystemConsole(object):
     
@@ -39,8 +40,8 @@ class LinuxSystemConsole(object):
             output = subprocess.Popen(['git','pull'], \
                                       cwd='/home/upmc_aren/yanoama', \
                                       stdout=subprocess.PIPE, close_fds=True).communicate()[0]
-#        elif cmd == "get_date":
-#            output = subprocess.Popen(['date'], \
-#                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0] 
+        elif command == 9 and param == 9:
+            output = subprocess.Popen(['date'], \
+                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0] 
         return output
     

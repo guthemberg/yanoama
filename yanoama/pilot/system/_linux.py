@@ -39,6 +39,10 @@ class LinuxSystemConsole(object):
             output = subprocess.Popen(['git','pull'], \
                                       cwd='/home/upmc_aren/yanoama', \
                                       stdout=subprocess.PIPE, close_fds=True).communicate()[0]
+            output += subprocess.Popen(['sudo','/home/upmc_aren/yanoama/contrib/yanoama/pilotd','stop'], \
+                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0]
+            output += subprocess.Popen(['sudo','/home/upmc_aren/yanoama/contrib/yanoama/pilotd','start'], \
+                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0]
 #        elif cmd == "get_date":
 #            output = subprocess.Popen(['date'], \
 #                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0] 

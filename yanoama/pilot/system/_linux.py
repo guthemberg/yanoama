@@ -75,8 +75,12 @@ class LinuxSystemConsole(object):
                                       stdout=subprocess.PIPE, close_fds=True).communicate()[0]
 
     def kill(self,process_name):
-        return subprocess.Popen(['sudo', 'pkill', '-f', process_name], \
+        output = subprocess.Popen(['sudo', 'pkill', '-f', process_name], \
                                       stdout=subprocess.PIPE, close_fds=True).communicate()[0]
+        if process_name=="pilotd":
+            subprocess.Popen(['sudo', 'rm', '-rf', "/var/run/pilotd.pid"], \
+                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0]
+        return output
 
     def start_amend(self):
         return subprocess.Popen(['sudo','/home/upmc_aren/monitoring/amen/amend','start'], \

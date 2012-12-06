@@ -3,6 +3,10 @@
 HOME=~
 YANOAMA_HOME=${HOME}/yanoama
 cd $HOME
+#check if pilot is running and try to stop
+if [ `pgrep -f pilotd|wc -l` -ge 1 ]; then
+  sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd stop
+fi
 #remove old installation
 rm -rf $YANOAMA_HOME
 #requirement, start cron

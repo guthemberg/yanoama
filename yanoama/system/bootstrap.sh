@@ -3,8 +3,11 @@
 HOME=~
 YANOAMA_HOME=${HOME}/yanoama
 cd $HOME
+#check if the system has required python version
+#that means 2.6.x or higher
+python_version_flag=`python -c 'import sys; print("%i" % (sys.hexversion<=0x02060000))'`
 #check if pilot is running and try to stop
-if [ `pgrep -f pilotd|wc -l` -ge 1 ]; then
+if [ `pgrep -f pilotd|wc -l` -ge 1 ] && [ $python_version_flag -eq 0 ]; then
   sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd stop
 fi
 #remove old installation
@@ -26,9 +29,19 @@ sudo cp ${YANOAMA_HOME}/config/yanoama.conf /etc/
 python ${YANOAMA_HOME}/yanoama/system/install_cron.py
 python ${YANOAMA_HOME}/yanoama/system/install_hosts.py
 #run pilot daemon
-sudo mkdir /usr/local/yanoama
-sudo touch /usr/local/yanoama/pilot.log
-chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
-sudo pkill -f pilotd && sudo rm -rf /var/run/pilotd.pid
-sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
+if [ ! -d "$DIRECTORY" ]; then
+  sudo mkdir /usr/local/yanoama
+  sudo touch /usr/local/yanoama/pilot.log
+  chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
+  sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
+elif [ $python_version_flag -eq 0 ]; then
+  #if there is python right version
+  chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
+  sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
+elif [ $python_version_flag -eq 1 ]; then
+  #wait 2 minutes before restart (for cleaning up connection stalled connections)
+  sleep 120
+  chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
+  sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
+fi
 

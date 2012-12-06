@@ -49,10 +49,14 @@ class PilotDaemon(Daemon):
 	def run(self):	
 		#HOST and PORT comes from defaults.py
 		bind_params=(settings.HOST, settings.PORT)
-		self.server = SocketServer.ThreadingTCPServer(bind_params, ThreadedTCPRequestHandler, False)
-		self.server.allow_reuse_address=True
-		self.server.server_bind()
-		self.server.server_activate()
+		try:
+			self.server = SocketServer.ThreadingTCPServer(bind_params, ThreadedTCPRequestHandler, False)
+			self.server.allow_reuse_address=True
+			self.server.server_bind()
+			self.server.server_activate()
+		except:
+			#legacy code for older python version (smaller than 2.6)
+			self.server = SocketServer.ThreadingTCPServer(bind_params, ThreadedTCPRequestHandler)
 		self.server.serve_forever()
 
 if __name__ == "__main__":

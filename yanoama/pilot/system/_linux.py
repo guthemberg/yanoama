@@ -94,5 +94,5 @@ class LinuxSystemConsole(object):
                                       stdout=subprocess.PIPE, close_fds=True).communicate()[0]
     def run_shell_script(self,full_path_to_shell):
         return subprocess.Popen(['sh',full_path_to_shell], \
-                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0]
+                                      stdout=subprocess.PIPE, close_fds=True)
                                       

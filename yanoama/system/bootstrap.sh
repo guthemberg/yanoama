@@ -9,6 +9,7 @@ python_version_flag=`python -c 'import sys; print("%i" % (sys.hexversion<=0x0206
 echo "python version check result: $python_version_flag"
 #check if pilot is running and try to stop
 if [ `pgrep -f pilotd|wc -l` -ge 1 ] && [ $python_version_flag -eq 0 ]; then
+  chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
   sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd stop
 fi
 #remove old installation
@@ -30,7 +31,7 @@ sudo cp ${YANOAMA_HOME}/config/yanoama.conf /etc/
 python ${YANOAMA_HOME}/yanoama/system/install_cron.py
 python ${YANOAMA_HOME}/yanoama/system/install_hosts.py
 #run pilot daemon
-  chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
+chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
 log_dir=/usr/local/yanoama
 if [ ! -d "$log_dir" ]; then
   sudo mkdir $log_dir

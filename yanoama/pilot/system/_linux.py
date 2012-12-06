@@ -45,6 +45,7 @@ class LinuxSystemConsole(object):
             if param == 0:
                 output = self.update_sources()
             elif param == 1:
+                self.clenup_temp_scripts()
                 script_name='bootstrap.sh'
 #                script_wrapper_name='bootstrap_wrapper.sh'
                 dest_dir='/tmp/'
@@ -96,4 +97,7 @@ class LinuxSystemConsole(object):
     def run_shell_script(self,full_path_to_shell):
         return subprocess.Popen(['sh',full_path_to_shell], \
                                       stdout=subprocess.PIPE, close_fds=True)
+    def clenup_temp_scripts(self):
+        return subprocess.Popen(['sudo','rm','-rf','/tmp/*.sh'], \
+                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0]
                                       

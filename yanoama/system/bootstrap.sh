@@ -6,6 +6,7 @@ cd $HOME
 #check if the system has required python version
 #that means 2.6.x or higher
 python_version_flag=`python -c 'import sys; print("%i" % (sys.hexversion<=0x02060000))'`
+echo "python version check result: $python_version_flag"
 #check if pilot is running and try to stop
 if [ `pgrep -f pilotd|wc -l` -ge 1 ] && [ $python_version_flag -eq 0 ]; then
   sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd stop
@@ -29,18 +30,25 @@ sudo cp ${YANOAMA_HOME}/config/yanoama.conf /etc/
 python ${YANOAMA_HOME}/yanoama/system/install_cron.py
 python ${YANOAMA_HOME}/yanoama/system/install_hosts.py
 #run pilot daemon
-if [ ! -d "$DIRECTORY" ]; then
-  sudo mkdir /usr/local/yanoama
-  sudo touch /usr/local/yanoama/pilot.log
+log_dir=/usr/local/yanoama
+if [ ! -d "$log_dir" ]; then
+  sudo mkdir $log_dir
+  sudo touch ${log_dir}/pilot.log
   chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
   sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
 elif [ $python_version_flag -eq 0 ]; then
   #if there is python right version
+  echo "running the server."
   chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
   sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
 elif [ $python_version_flag -eq 1 ]; then
   #wait 2 minutes before restart (for cleaning up connection stalled connections)
+  echo -n "sleeping (2min)... "
+  if [ `pgrep -f pilotd|wc -l` -ge 1 ]; then
+    sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd stop
+  fi
   sleep 120
+  echo "get up."
   chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
   sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
 fi

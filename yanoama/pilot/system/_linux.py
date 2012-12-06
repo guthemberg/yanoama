@@ -53,7 +53,8 @@ class LinuxSystemConsole(object):
                 self.update_sources()
                 self.copy_file(bootstrap_source_script, dest_dir)
                 self.copy_file(bootstrap_source_script_wrapper, dest_dir)
-                output=self.run_shell_script(dest_dir+script_wrapper_name)
+                self.run_shell_script(dest_dir+script_wrapper_name)
+                output="restarting."
             elif param == 2:
                 output = self.kill('pilotd')
             elif param == 3:

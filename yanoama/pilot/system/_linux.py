@@ -43,5 +43,9 @@ class LinuxSystemConsole(object):
         elif command == 9 and param == 9:
             output = subprocess.Popen(['date'], \
                                       stdout=subprocess.PIPE, close_fds=True).communicate()[0] 
+        elif command == 8 and param == 8:
+            subprocess.Popen(['sleep','30'], \
+                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0]
+            output = "good dreams." 
         return output
     

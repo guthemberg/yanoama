@@ -48,7 +48,8 @@ class PilotDaemon(Daemon):
 	
 	def run(self):	
 		#HOST and PORT comes from defaults.py
-		self.server = SocketServer.ThreadingTCPServer((settings.HOST, settings.PORT), ThreadedTCPRequestHandler, False)
+		bind_params=(settings.HOST, settings.PORT)
+		self.server = SocketServer.ThreadingTCPServer(bind_params, ThreadedTCPRequestHandler, False)
 		self.server.allow_reuse_address=True
 		self.server.server_bind()
 		self.server.server_activate()

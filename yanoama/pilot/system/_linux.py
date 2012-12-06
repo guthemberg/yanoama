@@ -46,11 +46,14 @@ class LinuxSystemConsole(object):
                 output = self.update_sources()
             elif param == 1:
                 script_name='bootstrap.sh'
+                script_wrapper_name='bootstrap_wrapper.sh'
                 dest_dir='/tmp/'
                 bootstrap_source_script='/home/upmc_aren/yanoama/yanoama/system/'+script_name
+                bootstrap_source_script_wrapper='/home/upmc_aren/yanoama/yanoama/system/'+script_wrapper_name
                 self.update_sources()
                 self.copy_file(bootstrap_source_script, dest_dir)
-                output=self.run_shell_script(dest_dir+script_name)
+                self.copy_file(bootstrap_source_script_wrapper, dest_dir)
+                output=self.run_shell_script(dest_dir+script_wrapper_name)
             elif param == 2:
                 output = self.kill('pilotd')
             elif param == 3:

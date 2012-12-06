@@ -9,8 +9,10 @@ integers only
 codes list:
 
 0,0: update main sources
-0,1: start daemon
-0,2: stop daemon
+0,1: bootstrap
+0,2: shutdown (kill pilot and amend)
+0,3: start amen daemon
+0,4: stop amen daemon
 9,9: get date for testing
 """
 class LinuxSystemConsole(object):
@@ -30,22 +32,60 @@ class LinuxSystemConsole(object):
             param=int(args[1])
         except ValueError:
             return output
-        if command == 0 and param == 1:
-            output = subprocess.Popen(['sudo','/home/upmc_aren/monitoring/amen/amend','start'], \
-                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0]
-        elif command == 0 and param == 2:
-            output = subprocess.Popen(['sudo','/home/upmc_aren/monitoring/amen/amend','stop'], \
-                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0]
-        elif command == 0 and param == 0:
-            output = subprocess.Popen(['git','pull'], \
-                                      cwd='/home/upmc_aren/yanoama', \
-                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0]
+        """
+        maintenance codes:
+        
+        0,0: update main sources
+        0,1: bootstrap
+        0,2: shutdown/kill pilot
+        0,3: start amen daemon
+        0,4: stop amen daemon
+        """
+        if command == 0 :
+            if param == 0:
+                output = self.update_sources()
+            elif param == 1:
+                script_name='bootstrap.sh'
+                dest_dir='/tmp/'
+                bootstrap_source_script='/home/upmc_aren/yanoama/yanoama/system/'+script_name
+                self.update_sources()
+                self.copy_file(bootstrap_source_script, dest_dir)
+                output=self.run_shell_script(dest_dir+script_name)
+            elif param == 2:
+                output = self.kill('pilotd')
+            elif param == 3:
+                output = self.start_amend()
+            elif param == 4:
+                output = self.stop_amend()
         elif command == 9 and param == 9:
-            output = subprocess.Popen(['date'], \
-                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0] 
-        elif command == 8 and param == 8:
-            subprocess.Popen(['sleep','30'], \
-                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0]
-            output = "good dreams." 
+            output =  self.get_date()
         return output
     
+    def update_sources(self):
+        return subprocess.Popen(['git','pull'], \
+                              cwd='/home/upmc_aren/yanoama', \
+                              stdout=subprocess.PIPE, close_fds=True).communicate()[0]
+                              
+    def get_date(self):
+        return subprocess.Popen(['date'], \
+                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0]
+
+    def copy_file(self,source_file,destination_path):
+        return subprocess.Popen(['cp','-f',source_file,destination_path], \
+                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0]
+
+    def kill(self,process_name):
+        return subprocess.Popen(['sudo', 'pkill', '-f', process_name], \
+                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0]
+
+    def start_amend(self):
+        return subprocess.Popen(['sudo','/home/upmc_aren/monitoring/amen/amend','start'], \
+                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0]
+                                      
+    def stop_amend(self):
+        return subprocess.Popen(['sudo','/home/upmc_aren/monitoring/amen/amend','stop'], \
+                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0]
+    def run_shell_script(self,full_path_to_shell):
+        return subprocess.Popen(['sh',full_path_to_shell], \
+                                      stdout=subprocess.PIPE, close_fds=True).communicate()[0]
+                                      

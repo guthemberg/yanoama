@@ -18,7 +18,9 @@ git clone git://github.com/guthemberg/yanoama
 #cp yanoama/monitoring/get_rtt.py ./
 sudo cp ${YANOAMA_HOME}/config/yanoama.conf /etc/
 #install script into the cron and copy get rtt script #cp yanoama/monitoring/get_rtt.py ./
+#similar to hosts
 python ${YANOAMA_HOME}/yanoama/system/install_cron.py
+python ${YANOAMA_HOME}/yanoama/system/install_hosts.py
 #run pilot daemon
 sudo mkdir /usr/local/yanoama
 sudo touch /usr/local/yanoama/pilot.log

@@ -1,4 +1,3 @@
-import sys
 try:
     import json
 except ImportError:

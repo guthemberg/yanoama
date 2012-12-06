@@ -30,16 +30,15 @@ sudo cp ${YANOAMA_HOME}/config/yanoama.conf /etc/
 python ${YANOAMA_HOME}/yanoama/system/install_cron.py
 python ${YANOAMA_HOME}/yanoama/system/install_hosts.py
 #run pilot daemon
+  chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
 log_dir=/usr/local/yanoama
 if [ ! -d "$log_dir" ]; then
   sudo mkdir $log_dir
   sudo touch ${log_dir}/pilot.log
-  chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
   sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
 elif [ $python_version_flag -eq 0 ]; then
   #if there is python right version
   echo "running the server."
-  chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
   sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
 elif [ $python_version_flag -eq 1 ]; then
   #wait 2 minutes before restart (for cleaning up connection stalled connections)
@@ -49,7 +48,6 @@ elif [ $python_version_flag -eq 1 ]; then
   fi
   sleep 120
   echo "get up."
-  chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
   sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
 fi
 

@@ -31,9 +31,9 @@ if hostname in _coordinators.keys():
     #and random minute
     #
     #installing script
-    subprocess.Popen(['sudo','cp', _ple_deployment['path']+'/yanoama/monitoring/get_rtt.py','/usr/local/bin/'], stdout=subprocess.PIPE, close_fds=True)
+    subprocess.Popen(['sudo','cp', _ple_deployment['path']+'/yanoama/monitoring/get_rtt.py','/bin/'], stdout=subprocess.PIPE, close_fds=True)
     #making it runnable
-    subprocess.Popen(['sudo','chmod', 'guo+x','/usr/local/bin/get_rtt.py'], stdout=subprocess.PIPE, close_fds=True)
+    subprocess.Popen(['sudo','chmod', 'guo+x','/bin/get_rtt.py'], stdout=subprocess.PIPE, close_fds=True)
 #    print "inside"
     mystring = str(minute)+"       "+str(hour)+"     *       *       *       get_rtt.py > /tmp/get_rtt_output.log 2>&1"
 #    print mystring

@@ -100,7 +100,14 @@ def getIntialNodes(cmd_args):
         filename=cmd_args[1]+'_nodes.pck'
         nodes=readNodes(filename)
     else:
-        filename='nodes.pck'
+        try:
+            config_file = file('/etc/yanoama.conf').read()
+            config = json.loads(config_file)
+        except Exception, e:
+            print "There was an error in your configuration file (/etc/yanoama.conf)"
+            raise e
+        _ple_deployment = config.get('ple_deployment', {})
+        filename=_ple_deployment['path']+'/nodes.pck'
         if os.path.isfile(filename):
             nodes=readNodes(filename)
         else:

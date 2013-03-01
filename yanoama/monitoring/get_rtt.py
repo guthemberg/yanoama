@@ -13,17 +13,20 @@ except ImportError:
     import simplejson as json
 
 #looking for yanoama module
-try:
-    from yanoama.planetlab.planetlab import MyOps
-except ImportError:
+def get_install_path():
     try:
         config_file = file('/etc/yanoama.conf').read()
         config = json.loads(config_file)
     except Exception, e:
         print "There was an error in your configuration file (/etc/yanoama.conf)"
         raise e
-    _ple_deployment = config.get('ple_deployment', {})
-    sys.path.append(_ple_deployment['path']) 
+    _ple_deployment = config.get('ple_deployment', "/home/upmc_aren/yanoama")
+    return (_ple_deployment['path']) 
+
+try:
+    from yanoama.planetlab.planetlab import MyOps
+except ImportError:
+    sys.path.append(get_install_path()) 
     #import yanoama modules alternatively
     from yanoama.planetlab.planetlab import MyOps
 
@@ -100,14 +103,7 @@ def getIntialNodes(cmd_args):
         filename=cmd_args[1]+'_nodes.pck'
         nodes=readNodes(filename)
     else:
-        try:
-            config_file = file('/etc/yanoama.conf').read()
-            config = json.loads(config_file)
-        except Exception, e:
-            print "There was an error in your configuration file (/etc/yanoama.conf)"
-            raise e
-        _ple_deployment = config.get('ple_deployment', {})
-        filename=_ple_deployment['path']+'/nodes.pck'
+        filename=get_install_path()+'/nodes.pck'
         if os.path.isfile(filename):
             nodes=readNodes(filename)
         else:

@@ -17,12 +17,13 @@ except Exception, e:
 
 
 _coordinators = config.get('coordinators', {})
+_ple_deployment = config.get('ple_deployment', {})
 
 hostname = subprocess.Popen(['hostname'], stdout=subprocess.PIPE, close_fds=True)\
         .communicate()[0].rstrip()
 
 minute=randrange(0,59)
-hour=randrange(0,23)
+hour=randrange(0,8)
 if hostname in _coordinators.keys():
     #this is a coordinator
     ##it install in the cron a 
@@ -30,7 +31,7 @@ if hostname in _coordinators.keys():
     #and random minute
     #
     #installing script
-    subprocess.Popen(['sudo','cp', '~/yanoama/yanoama/monitoring/get_rtt.py','/usr/local/bin/'], stdout=subprocess.PIPE, close_fds=True)
+    subprocess.Popen(['sudo','cp', _ple_deployment['path']+'/yanoama/monitoring/get_rtt.py','/usr/local/bin/'], stdout=subprocess.PIPE, close_fds=True)
     #making it runnable
     subprocess.Popen(['sudo','chmod', 'guo+x','/usr/local/bin/get_rtt.py'], stdout=subprocess.PIPE, close_fds=True)
 #    print "inside"

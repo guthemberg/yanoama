@@ -1,6 +1,9 @@
 from configobj import ConfigObj
-from planetlab import MyOps
-from planetlab import PlanetLabAPI
+from yanoama.planetlab.planetlab import MyOps
+from yanoama.planetlab.planetlab import PlanetLabAPI
+
+##print available nodes from api 
+#checking their availability through MyOps
 
 myops_nodes=MyOps().getAvailableNodes()
 

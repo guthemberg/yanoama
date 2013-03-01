@@ -20,7 +20,7 @@ def get_install_path():
     except Exception, e:
         print "There was an error in your configuration file (/etc/yanoama.conf)"
         raise e
-    _ple_deployment = config.get('ple_deployment', "/home/upmc_aren/yanoama")
+    _ple_deployment = config.get('ple_deployment', {"path":"/home/upmc_aren/yanoama"})
     return (_ple_deployment['path']) 
 
 try:

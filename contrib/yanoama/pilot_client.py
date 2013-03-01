@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/env python
 #-------------------------------------------------------------------------------
 # Name:        client.py
 # Purpose:     Pilot client for remote commands on planetlab nodes
@@ -36,10 +36,12 @@
 #===============================================================================
 
 import sys
-sys.path.append('/home/upmc_aren/yanoama')
 import socket
-from yanoama.pilot.core import settings
 from time import gmtime, strftime
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 
 class ClientSocket():
@@ -76,6 +78,15 @@ class ClientSocket():
         print "%s. %s,%s" % (strftime("%Y-%m-%d %H:%M:%S", gmtime()),\
                "    Sent:     "+(cmd),"    received: " +(received.strip()))
 
+def get_pilot_port():
+    try:
+        config_file = file('/etc/yanoama.conf').read()
+        config = json.loads(config_file)
+    except Exception, e:
+        print "There was an error in your configuration file (/etc/yanoama.conf)"
+        raise e
+    _pilot = config.get('pilot', {'port':44444})
+    return (_pilot['port']) 
 
 
 def main():
@@ -84,7 +95,8 @@ def main():
         sys.exit(1)
     host=sys.argv[1]
     cmd=sys.argv[2]
-    address = (host, settings.PORT)
+    
+    address = (host, get_pilot_port())
 
     console = ClientSocket(address)
     console.run(cmd)

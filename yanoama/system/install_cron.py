@@ -35,7 +35,7 @@ if hostname in _coordinators.keys():
     #making it runnable
     subprocess.Popen(['sudo','chmod', 'guo+x','/usr/local/bin/get_rtt.py'], stdout=subprocess.PIPE, close_fds=True)
 #    print "inside"
-    mystring = str(minute)+"       "+str(hour)+"     *       *       *       get_rtt.py > output.log 2>&1"
+    mystring = str(minute)+"       "+str(hour)+"     *       *       *       get_rtt.py > /tmp/get_rtt_output.log 2>&1"
 #    print mystring
     echo = subprocess.Popen(['echo', mystring], stdout=subprocess.PIPE, close_fds=True)
     install_cron_output = subprocess.Popen(['crontab'], stdin=echo.stdout, stdout=subprocess.PIPE, close_fds=True)

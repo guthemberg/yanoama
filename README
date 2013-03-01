@@ -1,3 +1,67 @@
+Caju's road map:
+
+* Overview: this design is based on caju [Silvestre et 
+al. 2012] and murder (a bittorrent implementation). 
+From caju, we have the concept of 
+	+ storage domain: a set of storage nodes that are 
+	close to each other, for instance, latency 
+	measurement
+	+ nodes' roles:
+		- coordinator: server that guides storage nodes
+		in terms of resources mapping and accounting.
+		bitorrent seeders run on this node, as weel
+		monitoring, including amen.
+		- storage node: peers that share and view 
+		videos. they compose a hybrid CDN for video 
+		distribution.
+
+* Basic scheme:
+ _______________					  _______________
+|			    |      commands      |               | 
+| coordinator   |------------------->| storage node  |
+| (pilot client,|					 | (pilot server,|
+| seeder,       |	                 | peer, amen    |
+| amen			|    measurements    | client)       |
+| monitoring    |<-------------------|               |
+| server)       |                    |               |
+|_______________|					 |_______________|
+
+* yanoama project (brief) description:
+	+ README file (this one): overall description
+	+ config: configuration files
+		- yanoama.conf : main conf file
+			* latency: latency the defines membership
+			* coordinator : nodes that play the role of
+			 coordinators entry: hostname:priority
+			* hosts: particular nodes in the system, e.g. 
+			localhost, european monitor....
+			* pilot: configurations for pilot, 
+			port:port_number
+		- ple.conf : ple configurations for fetching 
+		information from API
+			* API information: username, password, and  
+			host 
+	+ contrib: main deamons for running yanoama module
+		- yanoama: main yanoama deamons and client tools
+			*  pilotd and yanoamad
+	+ yanoama (python module): main module
+		- amen: adaptive monitoring for edge networks is 
+		server for coordinators. further information in 
+		its README.txt 
+		- monitoring: coordinators run a couple of scripts 
+		for maintaining storage domain membership
+		- pilot: this server runs on peers and allows 
+		coordinators to send commands to them (create 
+		video, see video...)
+		- planetlab: module with common procedured to 
+		interact with planetlab API
+		- system: main systems scripts, for bootstrapping, 
+		install cron, /etc/hosts file  
+
+* step-by-step deplyment based on role:
+	+ coordinator: install MongoD
+
+
 this is draft for the new deployment in planetlab
 	yanoama/planetlab/planetlab.py: library for planetlab API
 	yanoama/planetlab/update_slice.py: updates 'expires' time for eight more weeks

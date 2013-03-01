@@ -1,4 +1,11 @@
 ####bootstrap script
+
+##overview
+#1st: pre-install checkings
+#2nd step: download and install yanoama
+
+###1st step: pre-install checkings
+##clean up, check/stop pilot,cron start,install git
 #go to home
 HOME=~
 YANOAMA_HOME=${HOME}/yanoama
@@ -20,11 +27,17 @@ sudo /sbin/service crond start
 crontab -r
 #install git and json module
 sudo yum -y -d0 -e0 --quiet install git-core python-simplejson
+
+###2nd step: download and install yanoama
+##fetch sources from github, install conf files, 
+##start pilot
 #download yanoama through git
 git clone git://github.com/guthemberg/yanoama
 #for any update, run "git pull"
 #copy the main script and conf file
 #cp yanoama/monitoring/get_rtt.py ./
+#conf file installation must be the first
+#action after fetching sources
 sudo cp ${YANOAMA_HOME}/config/yanoama.conf /etc/
 #install script into the cron and copy get rtt script #cp yanoama/monitoring/get_rtt.py ./
 #similar to hosts

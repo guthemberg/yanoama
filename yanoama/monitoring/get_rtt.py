@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import sys
 from subprocess import PIPE
 from subprocess import Popen
@@ -6,7 +7,26 @@ from subprocess import Popen
 #from configobj import ConfigObj
 import pickle
 from datetime import datetime
-from yanoama.planetlab.planetlab import MyOps
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
+#looking for yanoama module
+try:
+    from yanoama.planetlab.planetlab import MyOps
+except ImportError:
+    try:
+        config_file = file('/etc/yanoama.conf').read()
+        config = json.loads(config_file)
+    except Exception, e:
+        print "There was an error in your configuration file (/etc/yanoama.conf)"
+        raise e
+    _ple_deployment = config.get('ple_deployment', {})
+    sys.path.append(_ple_deployment['path']) 
+    #import yanoama modules alternatively
+    from yanoama.planetlab.planetlab import MyOps
+
 import os
 
     #print api_server.AuthCheck(auth)

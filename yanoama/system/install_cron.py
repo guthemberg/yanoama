@@ -4,7 +4,10 @@ except ImportError:
     import simplejson as json
 
 import subprocess
+from random import randrange
 
+##this script checks the role of the node
+#and install cron tasks accordingly 
 try:
     config_file = file('/etc/yanoama.conf').read()
     config = json.loads(config_file)
@@ -18,11 +21,20 @@ _coordinators = config.get('coordinators', {})
 hostname = subprocess.Popen(['hostname'], stdout=subprocess.PIPE, close_fds=True)\
         .communicate()[0].rstrip()
 
+minute=randrange(0,59)
+hour=randrange(0,23)
 if hostname in _coordinators.keys():
-    #copy get_rtt
-    subprocess.Popen(['cp', 'yanoama/monitoring/get_rtt.py','./'], stdout=subprocess.PIPE, close_fds=True)
+    #this is a coordinator
+    ##it install in the cron a 
+    #a job to run at random hour
+    #and random minute
+    #
+    #installing script
+    subprocess.Popen(['sudo','cp', '~/yanoama/yanoama/monitoring/get_rtt.py','/usr/local/bin/'], stdout=subprocess.PIPE, close_fds=True)
+    #making it runnable
+    subprocess.Popen(['sudo','chmod', 'guo+x','/usr/local/bin/get_rtt.py'], stdout=subprocess.PIPE, close_fds=True)
 #    print "inside"
-    mystring = str(_coordinators[hostname])+"       */6     *       *       *       cd ~/yanoama && python get_rtt.py > output.log 2>&1"
+    mystring = str(minute)+"       "+str(hour)+"     *       *       *       get_rtt.py > output.log 2>&1"
 #    print mystring
     echo = subprocess.Popen(['echo', mystring], stdout=subprocess.PIPE, close_fds=True)
     install_cron_output = subprocess.Popen(['crontab'], stdin=echo.stdout, stdout=subprocess.PIPE, close_fds=True)

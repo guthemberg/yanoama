@@ -1,0 +1,114 @@
+#!/usr/bin/env python
+### BEGIN INIT INFO
+# Provides:          amend
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start the Amen system info collector
+# Description:       Amen daemon that collects system and process information.
+### END INIT INFO
+
+import sys, time
+import logging
+
+try:
+	import json
+except ImportError:
+	import simplejson as json
+
+config_file = file('/etc/yanoama.conf').read()
+config = json.loads(config_file)
+
+_ple_deployment = config.get('ple_deployment', {"path":"/home/upmc_aren/yanoama"})
+sys.path.append(_ple_deployment['path'])
+
+try:
+	import yanoama.amen
+except:
+	print 'Amen is not installed'
+	sys.exit()
+
+from yanoama.amen.system.daemon import Daemon
+from yanoama.amen.core import settings
+from yanoama.amen.system.runner import runner
+from yanoama.amen.backends.mongodb import backend
+
+PIDFILE = '/var/run/amend.pid'
+# Keep all log files in one place
+LOGFILE = '/usr/local/amen/amend.log'
+
+# Configure logging
+logging.basicConfig(filename=LOGFILE,level=logging.DEBUG)
+log = logging.getLogger('amend')
+
+class AmenDaemon(Daemon):
+	
+	# any maintenance event here
+	def empty(self):
+		return
+
+	# Executed on stop and restart
+	def __del__(self):
+		self.empty()
+		
+	def __init__(self, pidfile):
+		super(AmenDaemon, self).__init__(pidfile)
+		self.empty()
+	
+	def run(self):
+		
+		while True:
+			system_info = runner.system()
+			try:			
+				backend.store_entries(system_info)
+			except Exception, e:			
+				log.exception('Saving system info failed')
+			
+			#process_info = runner.processes()
+
+			#try:
+			#	backend.store_entries(process_info)
+			#except Exception, e:			
+			#	log.exception('Saving process info failed')
+
+			# Checks the system every 60 seconds
+			time.sleep(settings.SYSTEM_CHECK_PERIOD)
+
+if __name__ == "__main__":
+
+	daemon = AmenDaemon(PIDFILE)
+	
+	if len(sys.argv) == 2:
+		if 'start' == sys.argv[1]:
+			try:
+				daemon.start()
+			except Exception, e:
+				log.exception("Amend cant be started")
+		elif 'stop' == sys.argv[1]:
+			print "Stopping Amend ..."
+			daemon.stop()
+		elif 'restart' == sys.argv[1]:
+			print "Restaring Amend ..."
+			daemon.restart()
+		elif 'status' == sys.argv[1]:
+			try:
+				pf = file(PIDFILE,'r')
+				pid = int(pf.read().strip())
+				pf.close()
+			except IOError:
+				pid = None
+			except SystemExit:
+				pid = None
+
+			if pid:
+				print 'Amend is running as pid %s' % pid
+			else:
+				print 'Amend is not running.'
+		
+		else:
+			print "Unknown command"
+			sys.exit(2)
+			sys.exit(0)
+	else:
+		print "usage: %s start|stop|restart|status" % sys.argv[0]
+		sys.exit(2)
+

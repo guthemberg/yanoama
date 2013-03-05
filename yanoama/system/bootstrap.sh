@@ -23,9 +23,21 @@ fi
 sudo /sbin/service crond start
 #cleanup user cron
 crontab -r
-#install git and json module
-sudo yum -y -d0 -e0 --quiet install git-core python-simplejson
-
+#install required packages
+if [ `uname -m` == "x86_64" ]; then
+  ##64 bits 
+  sudo cp ${YANOAMA_HOME}/contrib/mongodb/fedora/10gen.repo.x86_64 /etc/yum.repos.d/10gen.repo
+else 
+  ##32 bits 
+  sudo cp ${YANOAMA_HOME}/contrib/mongodb/fedora/10gen.repo.i686 /etc/yum.repos.d/10gen.repo
+fi
+sudo yum -y -d0 -e0 --quiet install git-core python-simplejson mongo-10gen mongo-10gen-server pytz gcc sysstat python-devel
+CUR_DIR=`pwd`
+cd /tmp
+git clone git://github.com/mongodb/mongo-python-driver.git pymongo
+cd pymongo
+sudo python setup.py install
+cd $CUR_DIR
 ###2nd step: check,download/update and (re)install yanoama
 ##check if yanoama is already installed
 ##if yes, update sources, otherwise,
@@ -72,4 +84,24 @@ elif [ $python_version_flag -eq 1 ]; then
   echo "get up."
   sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
 fi
+##installing/running amen, it requires mongodb
+#installing requirement:monogodb
+MONODB_HOME=/usr/local/mongodb
+if [ ! -d "$MONODB_HOME" ]; then
+  ##if mongodn dorectory does not exist build it
+  sudo mkdir /usr/local/mongodb /usr/local/mongodb/data /usr/local/mongodb/bin && sudo touch /var/log/mongodb.log
+fi
+##checking architecture
+CUR_DIR=`pwd`
+if [ `uname -m` == "x86_64" ]; then
+  ##64 bits 
+  cd /tmp http://fastdl.mongodb.org/linux/mongodb-linux-x8664-2.2.0.tgz && gzip -cd mongodb-linux-x86_64-2.2.0.tgz | tar xf - && sudo cp mongodb-linux-x86_64-2.2.0/bin/mongod /usr/local/mongodb/bin/
+else 
+  ##32 bits 
+  cd /tmp http://fastdl.mongodb.org/linux/mongodb-linux-x8664-2.2.0.tgz && gzip -cd mongodb-linux-x86_64-2.2.0.tgz | tar xf - && sudo cp mongodb-linux-x86_64-2.2.0/bin/mongod /usr/local/mongodb/bin/
+fi
+cd $CUR_DIR
+#amen
+##
+echo "done."
 

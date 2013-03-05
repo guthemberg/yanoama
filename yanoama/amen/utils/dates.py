@@ -1,5 +1,5 @@
 from __future__ import division
-from amen.core import settings
+from yanoama.amen.core import settings
 from datetime import datetime
 import calendar
 from pytz import timezone

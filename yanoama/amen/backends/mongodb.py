@@ -3,8 +3,8 @@ try:
 except ImportError:
     pymongo = None
 
-from amen.core.exceptions import ImproperlyConfigured
-from amen.core import settings
+from yanoama.amen.core.exceptions import ImproperlyConfigured
+from yanoama.amen.core import settings
 
 
 class MongoBackend():

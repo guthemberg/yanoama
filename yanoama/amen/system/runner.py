@@ -1,6 +1,6 @@
-from amen.system.collector import system_info_collector, process_info_collector
-from amen.core import settings
-from amen.utils.dates import unix_utc_now
+from yanoama.amen.system.collector import system_info_collector, process_info_collector
+from yanoama.amen.core import settings
+from yanoama.amen.utils.dates import unix_utc_now
 import sys
 
 class Runner(object):

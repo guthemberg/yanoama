@@ -2,10 +2,10 @@ import subprocess
 import sys
 
 if sys.platform == 'darwin':
-    from amen.system._macos import MacOSSystemCollector
+    from yanoama.amen.system._macos import MacOSSystemCollector
     system_info_collector = MacOSSystemCollector()
 else:
-    from amen.system._linux import LinuxSystemCollector
+    from yanoama.amen.system._linux import LinuxSystemCollector
     system_info_collector = LinuxSystemCollector()
 
 

@@ -1,4 +1,4 @@
-from amen import defaults
+from yanoama.amen import defaults
 
 class Settings(object):
 

@@ -9,22 +9,21 @@ From caju, we have the concept of
 	+ nodes' roles:
 		- coordinator: server that guides storage nodes
 		in terms of resources mapping and accounting.
-		bitorrent seeders run on this node, as weel
+		bittorrent seeders run on this node, as well
 		monitoring, including amen.
 		- storage node: peers that share and view 
 		videos. they compose a hybrid CDN for video 
 		distribution.
 
 * Basic scheme:
- _______________					  _______________
-|			    |      commands      |               | 
-| coordinator   |------------------->| storage node  |
-| (pilot client,|					 | (pilot server,|
-| seeder,       |	                 | peer, amen    |
-| amen			|    measurements    | client)       |
-| monitoring    |<-------------------|               |
-| server)       |                    |               |
-|_______________|					 |_______________|
+ _______________				 _______________
+|			    |   commands    |               | 
+| coordinator   |-------------->| storage node  |----
+| (pilot client,|               | (pilot server,|    |
+| seeder,       |               | peer, amen    |    |
+| amen monitor: |  measurements | agent/deamon) |<---
+| mongobd)      |<--------------|               | view/
+|_______________|               |_______________|share
 
 * yanoama project (brief) description:
 	+ README file (this one): overall description
@@ -46,8 +45,9 @@ From caju, we have the concept of
 			*  pilotd and yanoamad
 	+ yanoama (python module): main module
 		- amen: adaptive monitoring for edge networks is 
-		server for coordinators. further information in 
-		its README.txt 
+		twofold: mongobd server for coordinator and a
+		agent/deamon for storage nodes/peers. further 
+		information in its README.txt 
 		- monitoring: coordinators run a couple of scripts 
 		for maintaining storage domain membership
 		- pilot: this server runs on peers and allows 

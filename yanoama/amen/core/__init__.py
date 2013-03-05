@@ -1,3 +1,3 @@
-from amen.core.settings import Settings
+from yanoama.amen.core.settings import Settings
 
 settings = Settings()

@@ -78,12 +78,23 @@ def install_cron_job(job,frequency='ONCE_A_DAY'):
         hour=get_cron_time_samples(0, 8, 1)
     mystring = str(minute)+"       "+str(hour)+\
     "     *       *       *       "+job
-    echo = subprocess.\
-    Popen(['echo', mystring], \
-          stdout=subprocess.PIPE, close_fds=True)
-    subprocess.Popen(['crontab'], stdin=echo.stdout,\
+    cron_temp_file='/tmp/cron.temp'
+    #first backup current jobs
+    current_jobs=subprocess.\
+        Popen(['crontab', '-l'], \
+          stdout=subprocess.PIPE, close_fds=True).communicate()[0].rstrip()
+    f = open(cron_temp_file, 'w')  
+    if len(current_jobs)>0:
+        f.write(current_jobs+'\n')
+    f.write(mystring)
+    f.close()
+    subprocess.Popen(['crontab',cron_temp_file], \
                     stdout=subprocess.PIPE, \
                     close_fds=True)
+    #remove temporary cron backup file
+    #clean up
+    subprocess.Popen(['rm', cron_temp_file], \
+                         stdout=subprocess.PIPE, close_fds=True)
     
 def install_runnable_script(script,\
                             deployment_path=DEPLOYMENT_PATH,\

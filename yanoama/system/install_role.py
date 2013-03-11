@@ -82,7 +82,7 @@ def install_cron_job(job,frequency='ONCE_A_DAY'):
     #first backup current jobs
     current_jobs=subprocess.\
         Popen(['crontab', '-l'], \
-          stdout=subprocess.PIPE, close_fds=True).communicate()[0].rstrip()
+          stdout=subprocess.PIPE, close_fds=True).communicate()[0]
     f = open(cron_temp_file, 'w')  
     if len(current_jobs)>0:
         f.write(current_jobs+'\n')

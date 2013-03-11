@@ -141,22 +141,26 @@ if __name__ == '__main__':
     services_file='/etc/services'
     services_origin_file='/etc/services.origin'
     temp_services_file='/tmp/services'
+    temp_file='/tmp/services.1'
     #check if /etc/hosts.origin exists 
     if not os.path.exists(services_origin_file):
         subprocess.Popen(['sudo','cp', '-f',services_file,services_origin_file], \
                          stdout=subprocess.PIPE, close_fds=True)
-    subprocess.Popen(['cp',services_origin_file,temp_services_file], \
-                     stdout=subprocess.PIPE, close_fds=True)
-    f = open(temp_services_file, 'a')  
+    f = open(temp_file, 'w')  
     f.write('#local services'+'\n')
     f.write('pilot\t\t'+str(PILOT_PORT)+'\n')
     f.write('mongo\t\t'+str(MONGO_PORT)+'\n')
     f.close()
+    output_file=open(temp_services_file,'w')
+    subprocess.Popen(['sudo','cat',services_origin_file,temp_file], \
+                     stdout=output_file, close_fds=True)
+    output_file.close()
     subprocess.Popen(['sudo','cp', '-f',temp_services_file,services_file], \
                      stdout=subprocess.PIPE, close_fds=True)
+
     #clean up
-    subprocess.Popen(['sudo','rm', temp_services_file], \
-                         stdout=subprocess.PIPE, close_fds=True)
+    subprocess.Popen(['rm',temp_services_file,temp_file], \
+                     stdout=subprocess.PIPE, close_fds=True)
     
     if HOSTNAME in _coordinators.keys():
         """this is a coordinator

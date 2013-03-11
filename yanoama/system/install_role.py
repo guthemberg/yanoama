@@ -85,7 +85,7 @@ def install_cron_job(job,frequency='ONCE_A_DAY'):
           stdout=subprocess.PIPE, close_fds=True).communicate()[0]
     f = open(cron_temp_file, 'w')  
     if len(current_jobs)>0:
-        f.write(current_jobs+'\n')
+        f.write(current_jobs)
     f.write(mystring+'\n')
     f.close()
     subprocess.Popen(['crontab',cron_temp_file], \
@@ -94,8 +94,8 @@ def install_cron_job(job,frequency='ONCE_A_DAY'):
     
     #remove temporary cron backup file
     #clean up
-    #subprocess.Popen(['rm', cron_temp_file], \
-    #                     stdout=subprocess.PIPE, close_fds=True)
+    subprocess.Popen(['rm', cron_temp_file], \
+                         stdout=subprocess.PIPE, close_fds=True)
     
 def install_runnable_script(script,\
                             deployment_path=DEPLOYMENT_PATH,\

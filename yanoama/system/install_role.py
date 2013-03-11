@@ -86,7 +86,7 @@ def install_cron_job(job,frequency='ONCE_A_DAY'):
     f = open(cron_temp_file, 'w')  
     if len(current_jobs)>0:
         f.write(current_jobs+'\n')
-    f.write(mystring)
+    f.write(mystring+'\n')
     f.close()
     subprocess.Popen(['crontab',cron_temp_file], \
                     stdout=subprocess.PIPE, \

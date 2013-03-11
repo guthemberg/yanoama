@@ -75,8 +75,10 @@ sudo cp ${YANOAMA_HOME}/config/yanoama.conf /etc/
 #                 mongodb
 #       
 #(b) peer:        membership(cron), amen(agent as
-#                 a daemon)      
+#                 a daemon)  
+echo -n "Installing role..."    
 python ${YANOAMA_HOME}/yanoama/system/install_role.py
+echo " done."    
 
 #run pilot daemon for all nodes (peers and coordinators)
 chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd

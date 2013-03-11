@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 import sys
-from subprocess import PIPE
-from subprocess import Popen
+from subprocess import PIPE, Popen 
 #for reding conf files easly, got from http://www.voidspace.org.uk/python/configobj.html, please add it as dependency
 #from planetlab import PlanetLabAPI
 #from configobj import ConfigObj
 import pickle
 from datetime import datetime
+from pymongo import Connection
 try:
     import json
 except ImportError:
@@ -32,11 +32,35 @@ except ImportError:
 
 import os
 
+def get_db_name_and_port():
+    try:
+        config_file = file('/etc/yanoama.conf').read()
+        config = json.loads(config_file)
+    except Exception, e:
+        print "There was an error in your configuration file (/etc/yanoama.conf)"
+        raise e
+    _amen = config.get('amen', {})
+    _backend = _amen.get('backend', {})
+    _mongo = _backend.get('mongo', {})    
+    return _mongo.get('db_name','yanoama'),_mongo.get('port',39167)
+
+def get_latency():
+    try:
+        config_file = file('/etc/yanoama.conf').read()
+        config = json.loads(config_file)
+    except Exception, e:
+        print "There was an error in your configuration file (/etc/yanoama.conf)"
+        raise e
+    _coordinators = config.get('coordinators', {})
+    HOSTNAME = Popen(['HOSTNAME'], stdout=PIPE, close_fds=True)\
+        .communicate()[0].rstrip()
+    return float(_coordinators.get(HOSTNAME).get('latency'))
+
     #print api_server.AuthCheck(auth)
 #    print ple.GetPeers(auth,None,['peer_id','peername'])
-#    print "ple nodes: "+str(len(ple.GetNodes(auth,{'peer_id':None},['peer_id','hostname'])))
-#    print "plc nodes: "+str(len(ple.GetNodes(auth,{'peer_id':1},['peer_id','hostname'])))
-#    print "plj nodes: "+str(len(ple.GetNodes(auth,{'peer_id':2},['peer_id','hostname'])))
+#    print "ple nodes: "+str(len(ple.GetNodes(auth,{'peer_id':None},['peer_id','HOSTNAME'])))
+#    print "plc nodes: "+str(len(ple.GetNodes(auth,{'peer_id':1},['peer_id','HOSTNAME'])))
+#    print "plj nodes: "+str(len(ple.GetNodes(auth,{'peer_id':2},['peer_id','HOSTNAME'])))
 
 #see bootstratNodesFile() for having information about the file format
 def readNodes(filename):
@@ -52,31 +76,27 @@ def saveNodes(dictionary,filename):
     nodes_file.close()
 
 #nodes file stores a dictionary with the following format
-#hostname:rtt
+#HOSTNAME:rtt
 #def bootstrapNodesFiles():
 #    config=ConfigObj('ple.conf')
 #    api=PlanetLabAPI(config['host'],config['username'],config['password'])
 #    ple_nodes={}
 #    for node in (api.getPLEHostnames()):
-#        ple_nodes[node['hostname']]=0
+#        ple_nodes[node['HOSTNAME']]=0
 #    saveNodes(ple_nodes,'ple_nodes.pck')
 #    plc_nodes={}
 #    for node in (api.getPLCHostnames()):
-#        plc_nodes[node['hostname']]=0
+#        plc_nodes[node['HOSTNAME']]=0
 #    saveNodes(plc_nodes,'plc_nodes.pck')
 #    nodes={}
 #    for node in (api.getHostnames()):
-#        nodes[node['hostname']]=0
+#        nodes[node['HOSTNAME']]=0
 #    saveNodes(nodes,'nodes.pck')
 
-def getRTT(hostname):
+def getRTT(HOSTNAME):
     try:
-        # subprocess.check_output(["sh get_rtt.sh "+hostname],stderr=subprocess.STDOUT,shell=True)
-        #print "sh get_rtt.sh "+hostname
-        #print Popen("sh get_rtt.sh "+hostname, stdout=PIPE,shell=True).communicate()[0]
-        return (float(Popen("sh "+get_install_path()+"/yanoama/system/get_rtt.sh "+hostname, stdout=PIPE,shell=True).communicate()[0]))
+        return (float(Popen("sh "+get_install_path()+"/yanoama/monitoring/get_rtt.sh "+HOSTNAME, stdout=PIPE,shell=True).communicate()[0]))
     except:
-        #raise
         return -1
 
 def online():
@@ -116,31 +136,47 @@ def getIntialNodes(cmd_args):
 
 def checkNodes(nodes,myops_nodes,bad_nodes,new_nodes=None):
     if new_nodes is not None:
-        for hostname in new_nodes:
-            rtt=getRTT(hostname)
+        for HOSTNAME in new_nodes:
+            rtt=getRTT(HOSTNAME)
             if rtt>0.0 :
-                nodes[hostname]=rtt
+                nodes[HOSTNAME]=rtt
         return
             
-    for hostname in nodes:
-        if "measurement-lab.org" in hostname:
-            bad_nodes.append(hostname)
+    for HOSTNAME in nodes:
+        if "measurement-lab.org" in HOSTNAME:
+            bad_nodes.append(HOSTNAME)
             continue
-        c_rtt = float(nodes[hostname])
-        rtt=getRTT(hostname)
+        c_rtt = float(nodes[HOSTNAME])
+        rtt=getRTT(HOSTNAME)
         if rtt>0.0 :
             if c_rtt==0.0 :
-                nodes[hostname]=rtt
+                nodes[HOSTNAME]=rtt
             elif rtt<c_rtt:
-                nodes[hostname]=rtt
+                nodes[HOSTNAME]=rtt
         else:
-            bad_nodes.append(hostname)
+            bad_nodes.append(HOSTNAME)
         #if it is in myops nodes, remove it
         try:
-            del myops_nodes[hostname]
+            del myops_nodes[HOSTNAME]
         except:
             pass
-    
+
+def save_to_db(nodes):  
+    db_name,port=get_db_name_and_port()
+    latency=get_latency()
+    too_far_nodes=[]
+    for HOSTNAME in nodes.keys():
+        if nodes[HOSTNAME]<latency:
+            too_far_nodes.append(HOSTNAME)
+    #clean up bad nodes
+    for HOSTNAME in too_far_nodes:
+        del nodes[HOSTNAME]
+    connection = Connection('localhost', port)
+    db = connection[db_name]
+    nodes_latency_measurements=db.nodes_latency_measurements
+    nodes_latency_measurements.drop()
+    nodes_latency_measurements.insert(nodes)
+      
 
 if __name__ == '__main__':
     if not online():
@@ -159,21 +195,9 @@ if __name__ == '__main__':
     #checking remaining potential new nodes
     checkNodes(nodes, {}, [], myops_nodes)
     #clean up bad nodes
-    for hostname in bad_nodes:
-        del nodes[hostname]
+    for HOSTNAME in bad_nodes:
+        del nodes[HOSTNAME]
     saveNodes(nodes, filename)
+    save_to_db(nodes)
     log('done. ')
     sys.exit(0)
-
-#inputfile = "nodes.tbl"
-
-#if os.path.isfile(inputfile) and os.path.exists(inputfile):
-#    print 'ok'
-#else:
-#    print 'to do'
-
-
-#hostname="ple2.ipv6.lip6.fr"
-#print hostname
-#rtt=int(float(subprocess.check_output(["sh /tmp/get_rtt.sh "+hostname],stderr=subprocess.STDOUT,shell=True)))
-#print rtt

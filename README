@@ -29,9 +29,10 @@ From caju, we have the concept of
 	+ README file (this one): overall description
 	+ config: configuration files
 		- yanoama.conf : main conf file
-			* latency: latency the defines membership
 			* coordinator : nodes that play the role of
-			 coordinators entry: hostname:priority
+			 coordinators. entries: hostname, ip, 
+			 latencies (that defines membership to a 
+			 storage domain)
 			* hosts: particular nodes in the system, e.g. 
 			localhost, european monitor....
 			* pilot: configurations for pilot, 

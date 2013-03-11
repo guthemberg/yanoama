@@ -1,0 +1,45 @@
+bootstrap scripts:
+	* bootstrap.sh: 
+	main bootstrap script. It must be called 
+	whenever we need to deploy our system to 
+	a testbed node. it calls install_role.py 
+	script.
+	
+	* install_role.py: 
+	it verifies if this node will pay either a 
+	coordinator or a peer role in a CDN 
+	infrastructure. if defines the node role 
+	according to the main configuration file
+	(yanoama.conf). Regarding to the node role,
+	it installs scripts to the local system as 
+	cron jobs. for coordinators it installs:
+	monitoring/get_rtt.py and peering.py. for
+	peers, it installs membership.py. 
+	
+
+scripts for specific role:
+	* coordinator:
+		+ peering.py: this script must run 
+		periodically, twice a day (as a cron
+		job). it allows coordinators to exchange
+		the list of peers and define membership
+		lists based on latency.
+
+	* peer:
+		+ membership.py: is a script to be run
+		periodically (e.g. as a cron job, 
+		once a day frequency). It allows peers 
+		to connect to a coordinator and check 
+		membership.it creates /etc/hosts file 
+		with a 'coordinator' entry according 
+		to the peer membership. peers without 
+		this entry are not allowed to 
+		participate to the CDN.
+
+miscelanous:
+	* view_available_nodes_warapper.sh: 
+	this scripts permits reading the raw 
+	information for membership. basically, it
+	prints out a ordered list of testbed nodes
+	based on latency
+			

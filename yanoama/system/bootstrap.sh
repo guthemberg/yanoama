@@ -63,15 +63,6 @@ cd pymongo
 sudo python setup.py install
 cd $CUR_DIR
 
-#update /etc/services
-if [ ! -f "/etc/services.orig" ]; then
-	sudo cp /etc/services /etc/services.orig
-fi
-sudo cat /etc/services.orig > /etc/services
-sudo echo "#local services" >> /etc/services
-sudo echo "pilot    44444/tcp #pilot sercive" >> /etc/services
-sudo echo "mongod    39167/tcp #database" >> /etc/services
-
 #for any update, run "git pull"
 #copy the main script and conf file
 #cp yanoama/monitoring/get_rtt.py ./

@@ -109,7 +109,7 @@ def install_runnable_script(script,\
                      close_fds=True)
     #making it runnable
     subprocess.Popen(['sudo','chmod', 'guo+x',\
-                      (dst_dir+'/'+script)],\
+                      (dst_dir+'/'+script.split('/')[-1])],\
                      stdout=subprocess.PIPE,\
                      close_fds=True)
 

@@ -34,6 +34,7 @@ _amen = config.get('amen', {})
 _backend = _amen.get('backend', {})
 _mongo = _backend.get('mongo', {})    
 MONGO_PORT=_mongo.get('port',39167)
+MONGO_REPLICATION_PORT=_mongo.get('replication_port',40167)
 _pilot = config.get('pilot', {})
 PILOT_PORT=_pilot.get('port',44444)
 ##gets a comma-separated samples as a
@@ -150,6 +151,7 @@ if __name__ == '__main__':
     f.write('#local services'+'\n')
     f.write('pilot\t\t'+str(PILOT_PORT)+'/tcp\n')
     f.write('mongo\t\t'+str(MONGO_PORT)+'/tcp\n')
+    f.write('mongo_replication\t\t'+str(MONGO_REPLICATION_PORT)+'/tcp\n')
     f.close()
     output_file=open(temp_services_file,'w')
     subprocess.Popen(['sudo','cat',services_origin_file,temp_file], \

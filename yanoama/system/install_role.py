@@ -42,11 +42,11 @@ def get_cron_time_samples(start,stop,samples):
     samples -- number of samples
 
     Returns:
-    string -- comma-separated list of sanples
+    string -- comma-separated list of samples
     from the start-stop range 
     
     """
-    return str(sample(start,stop,samples)).\
+    return str(sample(xrange(start,stop),samples)).\
         replace(' ','').\
         replace(']','').replace('[','')
         

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 try:
     import json
 except ImportError:
@@ -12,9 +14,9 @@ import os
 try:
     config_file = file('/etc/yanoama.conf').read()
     config = json.loads(config_file)
-except Exception, e:
+except:
     print "There was an error in your configuration file (/etc/yanoama.conf)"
-    raise e
+    raise
 
 
 #globals

@@ -26,8 +26,7 @@ DEPLOYMENT_PATH=_ple_deployment['path']
 _amen = config.get('amen', {})
 STORAGE_PATH = _ple_deployment['storage_path']
 AMEN_HOME=_amen['home']
-HOSTNAME = subprocess.Popen(\
-                            ['HOSTNAME'], \
+HOSTNAME = subprocess.Popen(['hostname'], \
                             stdout=subprocess.PIPE,\
                             close_fds=True).\
                             communicate()[0].rstrip()

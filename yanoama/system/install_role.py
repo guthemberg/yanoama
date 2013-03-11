@@ -30,6 +30,12 @@ HOSTNAME = subprocess.Popen(['hostname'], \
                             stdout=subprocess.PIPE,\
                             close_fds=True).\
                             communicate()[0].rstrip()
+_amen = config.get('amen', {})
+_backend = _amen.get('backend', {})
+_mongo = _backend.get('mongo', {})    
+MONGO_PORT=_mongo.get('port',39167)
+_pilot = config.get('pilot', {})
+PILOT_PORT=_pilot.get('port',44444)
 ##gets a comma-separated samples as a
 #string for cron jobs
 def get_cron_time_samples(start,stop,samples):
@@ -131,6 +137,27 @@ if __name__ == '__main__':
     either peer or coordinator.
 
     """
+    #update services file
+    services_file='/etc/services'
+    services_origin_file='/etc/services.origin'
+    temp_services_file='/tmp/services'
+    #check if /etc/hosts.origin exists 
+    if not os.path.exists(services_origin_file):
+        subprocess.Popen(['sudo','cp', '-f',services_file,services_origin_file], \
+                         stdout=subprocess.PIPE, close_fds=True)
+    subprocess.Popen(['cp',services_origin_file,temp_services_file], \
+                     stdout=subprocess.PIPE, close_fds=True)
+    f = open(temp_services_file, 'a')  
+    f.write('#local services'+'\n')
+    f.write('pilot\t\t'+PILOT_PORT+'\n')
+    f.write('mongo\t\t'+MONGO_PORT+'\n')
+    f.close()
+    subprocess.Popen(['sudo','cp', '-f',temp_services_file,services_file], \
+                     stdout=subprocess.PIPE, close_fds=True)
+    #clean up
+    subprocess.Popen(['sudo','rm', temp_services_file], \
+                         stdout=subprocess.PIPE, close_fds=True)
+    
     if HOSTNAME in _coordinators.keys():
         """this is a coordinator
         #here the two-step installation procedure

@@ -91,6 +91,7 @@ def install_cron_job(job,frequency='ONCE_A_DAY'):
     subprocess.Popen(['crontab',cron_temp_file], \
                     stdout=subprocess.PIPE, \
                     close_fds=True)
+    
     #remove temporary cron backup file
     #clean up
     #subprocess.Popen(['rm', cron_temp_file], \

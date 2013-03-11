@@ -148,8 +148,8 @@ if __name__ == '__main__':
                          stdout=subprocess.PIPE, close_fds=True)
     f = open(temp_file, 'w')  
     f.write('#local services'+'\n')
-    f.write('pilot\t\t'+str(PILOT_PORT)+'\n')
-    f.write('mongo\t\t'+str(MONGO_PORT)+'\n')
+    f.write('pilot\t\t'+str(PILOT_PORT)+'/tcp\n')
+    f.write('mongo\t\t'+str(MONGO_PORT)+'/tcp\n')
     f.close()
     output_file=open(temp_services_file,'w')
     subprocess.Popen(['sudo','cat',services_origin_file,temp_file], \

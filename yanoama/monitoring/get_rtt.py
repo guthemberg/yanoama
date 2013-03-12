@@ -23,13 +23,6 @@ def get_install_path():
     _ple_deployment = config.get('ple_deployment', {"path":"/home/upmc_aren/yanoama"})
     return (_ple_deployment['path']) 
 
-try:
-    from yanoama.planetlab.planetlab import MyOps
-except ImportError:
-    sys.path.append(get_install_path()) 
-    #import yanoama modules alternatively
-    from yanoama.planetlab.planetlab import MyOps
-
 import os
 
 def get_db_name_and_port():
@@ -156,6 +149,12 @@ def save_to_db(nodes):
       
 
 if __name__ == '__main__':
+    try:
+        from yanoama.planetlab.planetlab import MyOps
+    except ImportError:
+        sys.path.append(get_install_path()) 
+        #import yanoama modules alternatively
+        from yanoama.planetlab.planetlab import MyOps
     if not online():
         log('offline')
         sys.exit(-1)

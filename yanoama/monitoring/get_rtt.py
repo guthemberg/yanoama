@@ -131,21 +131,35 @@ def checkNodes(nodes,myops_nodes,bad_nodes,new_nodes=None):
         except:
             pass
 
-def save_to_db(nodes):  
+def convert_dict_keys_from_dots_to_colons(my_dict):
+    #this assumes that 
+    #keys are stringsjust the first key 
+    #has colons
+    converted_dict={}
+    for key in my_dict.keys():
+        converted_dict[key.replace('.',':')]=my_dict[key]
+    return converted_dict
+
+def save_to_db(nodes): 
+    #first convert hostnames
+    #comma-separated to dot-
+    #separated, mongo db does
+    #not accept keys with dots 
+    converted_nodes=convert_dict_keys_from_dots_to_colons(nodes)
     db_name,port=get_db_name_and_port()
     latency=get_latency()
     too_far_nodes=[]
-    for hostname in nodes.keys():
-        if nodes[hostname]<latency:
+    for hostname in converted_nodes.keys():
+        if converted_nodes[hostname]<latency:
             too_far_nodes.append(hostname)
     #clean up bad nodes
     for hostname in too_far_nodes:
-        del nodes[hostname]
+        del converted_nodes[hostname]
     connection = Connection('localhost', port)
     db = connection[db_name]
     nodes_latency_measurements=db.nodes_latency_measurements
     nodes_latency_measurements.drop()
-    nodes_latency_measurements.insert(nodes)
+    nodes_latency_measurements.insert(converted_nodes)
       
 
 if __name__ == '__main__':

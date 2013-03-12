@@ -159,7 +159,7 @@ if __name__ == '__main__':
         print 'waiting for copying services file...'
         sleep(1/1000.0)
     f = open(temp_services_file, 'w')  
-    subprocess.Popen(['cat',services_origin_file], \
+    cat_command = subprocess.Popen(['cat',services_origin_file], \
                      stdout=f, close_fds=True)
     f.write('#local services'+'\n')
     f.write('pilot\t\t'+str(PILOT_PORT)+'/tcp\n')
@@ -170,7 +170,7 @@ if __name__ == '__main__':
         print 'waiting for creating services temp file...'
         sleep(1/1000.0)
     cp_command=subprocess.Popen(['sudo','cp',temp_services_file,services_file], \
-                     stdout=subprocess.PIPE, close_fds=True)
+                     stdout=cat_command.stdout, close_fds=True)
     sleep(10/1000.0)
     #clean up
     subprocess.Popen(['rm',temp_services_file], \

@@ -171,14 +171,21 @@ if __name__ == '__main__':
         #install as a cron job for running twice a day
         install_cron_job("peering.py > /tmp/peering_output.log 2>&1",\
                          'TWICE_A_DAY')
+        #set role
+        temp_services_file='/tmp/role'
+        f = open(temp_services_file, 'w')  
+        f.write('coordinator')
+        f.close()
+        
         #(2) install amen in coordinator: mongodb 
         #based on
         #http://docs.mongodb.org/manual/tutorial/install-mongodb-on-red-hat-centos-or-fedora-linux/
         #last visit 5 March 2013
         #listen on 39167 port
-        subprocess.Popen(['sudo','cp',DEPLOYMENT_PATH+'/contrib/mongodb/mongod.conf','/etc/mongod.conf'], stdout=subprocess.PIPE, close_fds=True)
-        subprocess.Popen(['sudo','/sbin/chkconfig','mongod','on'], stdout=subprocess.PIPE, close_fds=True)
-        subprocess.Popen(['sudo','/sbin/service','mongod','start'], stdout=subprocess.PIPE, close_fds=True)    
+        
+        #subprocess.Popen(['sudo','cp',DEPLOYMENT_PATH+'/contrib/mongodb/mongod.conf','/etc/mongod.conf'], stdout=subprocess.PIPE, close_fds=True)
+        #subprocess.Popen(['sudo','/sbin/chkconfig','mongod','on'], stdout=subprocess.PIPE, close_fds=True)
+        #subprocess.Popen(['sudo','/sbin/service','mongod','start'], stdout=subprocess.PIPE, close_fds=True)    
     
     else:
         """peer/storage node role
@@ -207,5 +214,10 @@ if __name__ == '__main__':
         #run daemon
         subprocess.Popen(['sudo','chmod','+x',AMEN_HOME+'/bin/amend'],stdout=subprocess.PIPE, close_fds=True)
         subprocess.Popen(['sudo',AMEN_HOME+'/bin/amend','start'],stdout=subprocess.PIPE, close_fds=True)
+        #set role
+        temp_services_file='/tmp/role'
+        f = open(temp_services_file, 'w')  
+        f.write('peer')
+        f.close()
             
         print "outside"

@@ -87,6 +87,17 @@ if [ -e "/tmp/services" ]; then
   sudo cp /tmp/services.1 /etc/services
   rm -rf /tmp/services /tmp/services.1
 fi
+#updating role
+ROLE_FILE="/tmp/role"
+if [ -e "$ROLE_FILE" ]; then
+  if [ `cat $ROLE_FILE` = "coordinator" ]; then
+	  sudo cp ${YANOAMA_HOME}/contrib/mongodb/mongod.conf /etc/mongod.conf
+	  sudo /sbin/chkconfig mongod on
+	  sudo /sbin/service mongod start
+  fi
+  sudo cp $ROLE_FILE /etc/
+  rm $ROLE_FILE
+fi
 echo " done."    
 
 #run pilot daemon for all nodes (peers and coordinators)

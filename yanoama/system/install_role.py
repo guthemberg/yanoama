@@ -8,6 +8,8 @@ except ImportError:
 import subprocess
 from random import sample
 import os
+from time import sleep
+from filecmp import cmp
 
 ##this script checks the role of the node
 #and installs cron and amen (for coordinator) 
@@ -141,28 +143,24 @@ if __name__ == '__main__':
     #update services file
     services_file='/etc/services'
     services_origin_file='/etc/services.origin'
-    temp_services_file='/tmp/services'
-    temp_file='/tmp/services.1'
     #check if /etc/hosts.origin exists 
     if not os.path.exists(services_origin_file):
         subprocess.Popen(['sudo','cp', '-f',services_file,services_origin_file], \
                          stdout=subprocess.PIPE, close_fds=True)
-    f = open(temp_file, 'w')  
+    while not os.path.exists(services_origin_file):
+        print 'waiting for copying origin...'
+        sleep(1/1000.0)
+    subprocess.Popen(['sudo','cp', '-f',services_origin_file,services_file], \
+                     stdout=subprocess.PIPE, close_fds=True)
+    while not cmp(services_origin_file, services_file):
+        print 'waiting for copying services file...'
+        sleep(1/1000.0)
+    f = open(services_file, 'a')  
     f.write('#local services'+'\n')
     f.write('pilot\t\t'+str(PILOT_PORT)+'/tcp\n')
     f.write('mongo\t\t'+str(MONGO_PORT)+'/tcp\n')
     f.write('mongo_replication\t\t'+str(MONGO_REPLICATION_PORT)+'/tcp\n')
     f.close()
-    output_file=open(temp_services_file,'w')
-    subprocess.Popen(['sudo','cat',services_origin_file,temp_file], \
-                     stdout=output_file, close_fds=True)
-    output_file.close()
-    subprocess.Popen(['sudo','cp', '-f',temp_services_file,services_file], \
-                     stdout=subprocess.PIPE, close_fds=True)
-
-    #clean up
-    subprocess.Popen(['rm',temp_services_file,temp_file], \
-                     stdout=subprocess.PIPE, close_fds=True)
     
     if HOSTNAME in _coordinators.keys():
         """this is a coordinator

@@ -155,22 +155,29 @@ if __name__ == '__main__':
                      stdout=subprocess.PIPE, close_fds=True)
     subprocess.Popen(['sudo','cp', services_origin_file,services_file], \
                      stdout=subprocess.PIPE, close_fds=True)
+    subprocess.Popen(['sudo','cp', services_origin_file,services_file], \
+                     stdout=subprocess.PIPE, close_fds=True)
     while not cmp(services_origin_file, services_file):
         print 'waiting for copying services file...'
         sleep(1/1000.0)
-    f = open(temp_services_file, 'w')  
-    subprocess.Popen(['cat',services_origin_file], \
-                     stdout=f, close_fds=True)
+    subprocess.Popen(['cp', services_origin_file,temp_services_file], \
+                     stdout=subprocess.PIPE, close_fds=True)
+    while not os.path.exists(temp_services_file):
+        print 'waiting for copying services temp file...'
+        sleep(1/1000.0)
+    f = open(temp_services_file, 'a')  
     f.write('#local services'+'\n')
     f.write('pilot\t\t'+str(PILOT_PORT)+'/tcp\n')
     f.write('mongo\t\t'+str(MONGO_PORT)+'/tcp\n')
     f.write('mongo_replication\t\t'+str(MONGO_REPLICATION_PORT)+'/tcp\n')
     f.close()
-    print "waiting for copying tem file"
+    print "waiting for copying temp file..."
     sleep(1)
     cp_command=subprocess.Popen(['sudo','cp',temp_services_file,services_file], \
                      stdout=subprocess.PIPE, close_fds=True)
-    sleep(10/1000.0)
+    while not cmp(services_file, temp_services_file):
+        print "waiting for copying temp file to services..."
+        sleep(1/1000.0)
     #clean up
     subprocess.Popen(['rm',temp_services_file], \
                      stdin=cp_command.stdout, stdout=subprocess.PIPE, close_fds=True)

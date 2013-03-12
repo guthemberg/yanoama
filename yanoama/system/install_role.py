@@ -159,24 +159,17 @@ if __name__ == '__main__':
         print 'waiting for copying services file...'
         sleep(1/1000.0)
     f = open(temp_services_file, 'w')  
-    cat_command = subprocess.Popen(['cat',services_origin_file], \
+    subprocess.Popen(['cat',services_origin_file], \
                      stdout=f, close_fds=True)
     f.write('#local services'+'\n')
     f.write('pilot\t\t'+str(PILOT_PORT)+'/tcp\n')
     f.write('mongo\t\t'+str(MONGO_PORT)+'/tcp\n')
     f.write('mongo_replication\t\t'+str(MONGO_REPLICATION_PORT)+'/tcp\n')
     f.close()
-    flag=True
-    while flag:
-        try:
-            with open(temp_services_file) as new_file:#or just open
-                flag=False
-        except IOError:
-            flag=True
-        print 'waiting for creating services temp file...'
-        sleep(1/1000.0)
+    print "waiting for copying tem file"
+    sleep(1)
     cp_command=subprocess.Popen(['sudo','cp',temp_services_file,services_file], \
-                     stdout=cat_command.stdout, close_fds=True)
+                     stdout=subprocess.PIPE, close_fds=True)
     sleep(10/1000.0)
     #clean up
     subprocess.Popen(['rm',temp_services_file], \

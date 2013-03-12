@@ -1,6 +1,6 @@
 import xmlrpclib
 #working with http data. further information in http://docs.python.org/3.1/howto/urllib2.html
-import urllib
+from urllib2 import urlopen
 #bola
 
 class PlanetLabAPI:
@@ -71,7 +71,7 @@ class MyOps:
         self.status_table={}
         
         #PLE information
-        ple_nodes_status = urllib.urlopen(self.myops_ple_url+query)
+        ple_nodes_status = urlopen(self.myops_ple_url+query)
         line=ple_nodes_status.readline()
         #get rid of header
         if line.split(',')[0] == 'hostname' and line.split(',')[1] == 'observed_status':
@@ -82,7 +82,7 @@ class MyOps:
             line=ple_nodes_status.readline()            
 
         #PLC information
-        plc_nodes_status = urllib.urlopen(self.myops_plc_url+query)
+        plc_nodes_status = urlopen(self.myops_plc_url+query)
         line=plc_nodes_status.readline()
         #get rid of header
         if line.split(',')[0] == 'hostname' and line.split(',')[1] == 'observed_status':

@@ -179,7 +179,7 @@ if __name__ == '__main__':
     sleep(1)
     #clean up
     subprocess.Popen(['rm',temp_services_file], \
-                     stdin=cp_command.stdout, stdout=subprocess.PIPE, close_fds=True)
+                     stdout=subprocess.PIPE, close_fds=True)
     
     if HOSTNAME in _coordinators.keys():
         """this is a coordinator

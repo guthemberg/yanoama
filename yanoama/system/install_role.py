@@ -140,46 +140,15 @@ if __name__ == '__main__':
     either peer or coordinator.
 
     """
-    #update services file
-    services_file='/etc/services'
-    services_origin_file='/etc/services.origin'
+    #update services file with temp file, 
+    #rest must be done by command line
     temp_services_file='/tmp/services'
-    #check if /etc/hosts.origin exists 
-    if not os.path.exists(services_origin_file):
-        subprocess.Popen(['sudo','cp', services_file,services_origin_file], \
-                         stdout=subprocess.PIPE, close_fds=True)
-    while not os.path.exists(services_origin_file):
-        print 'waiting for copying origin...'
-        sleep(1/1000.0)
-    subprocess.Popen(['sudo','cp', services_origin_file,services_file], \
-                     stdout=subprocess.PIPE, close_fds=True)
-    subprocess.Popen(['sudo','cp', services_origin_file,services_file], \
-                     stdout=subprocess.PIPE, close_fds=True)
-    while not cmp(services_origin_file, services_file):
-        print 'waiting for copying services file...'
-        sleep(1/1000.0)
-    subprocess.Popen(['cp', services_origin_file,temp_services_file], \
-                     stdout=subprocess.PIPE, close_fds=True)
-    while not os.path.exists(temp_services_file):
-        print 'waiting for copying services temp file...'
-        sleep(1/1000.0)
-    f = open(temp_services_file, 'a')  
+    f = open(temp_services_file, 'w')  
     f.write('#local services'+'\n')
     f.write('pilot\t\t'+str(PILOT_PORT)+'/tcp\n')
     f.write('mongo\t\t'+str(MONGO_PORT)+'/tcp\n')
     f.write('mongo_replication\t\t'+str(MONGO_REPLICATION_PORT)+'/tcp\n')
     f.close()
-    print "waiting for copying temp file..."
-    sleep(1)
-    subprocess.Popen(['sudo','cp',temp_services_file,services_file], \
-                     stdout=subprocess.PIPE, close_fds=True)
-    while not cmp(services_file, temp_services_file):
-        print "waiting for copying temp file to services..."
-        sleep(1/1000.0)
-    sleep(1)
-    #clean up
-    subprocess.Popen(['rm',temp_services_file], \
-                     stdout=subprocess.PIPE, close_fds=True)
     
     if HOSTNAME in _coordinators.keys():
         """this is a coordinator

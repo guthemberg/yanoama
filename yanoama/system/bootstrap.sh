@@ -78,6 +78,13 @@ sudo cp ${YANOAMA_HOME}/config/yanoama.conf /etc/
 #                 a daemon)  
 echo -n "Installing role..."    
 python ${YANOAMA_HOME}/yanoama/system/install_role.py
+#updatting /etc/services
+if [ ! -e "/etc/services.origin" ]; then
+  sudo cp /etc/services /etc/services.origin 
+fi
+if [ -e "/tmp/services" ]; then
+  sudo cat /etc/services.origin /tmp/services > /etc/services
+fi
 echo " done."    
 
 #run pilot daemon for all nodes (peers and coordinators)

@@ -167,7 +167,7 @@ if __name__ == '__main__':
     f.write('mongo_replication\t\t'+str(MONGO_REPLICATION_PORT)+'/tcp\n')
     f.close()
     flag=True
-    while not os.path.exists(temp_services_file):
+    while flag:
         try:
             with open(temp_services_file) as new_file:#or just open
                 flag=False

@@ -78,16 +78,16 @@ def get_current_nodes(api,slice_name):
 # saves nodes list into /tmp/nodes.pck, 
 # and returns true
 # if its content seems ok
-def download_nodes_list(HOSTNAME):
+def download_nodes_list(hostname):
     nodes_list=[]
     filename='%s/%s'%(TMP_DIR,NODES_DB)
     config=ConfigObj(PLE_CONF_FILE)
     key=config['key']
     #try to fetch the nodes db from the remote host
-    #scp_output = subprocess.Popen(['scp', '-q','-i',key,'%s@%s:/home/%s/yanoama/%s'%(USER,HOSTNAME,USER,NODES_DB), filename ], stdout=subprocess.PIPE, close_fds=True).communicate()[0]
-    scp_output = subprocess.Popen(['scp', '-i',key,'%s@%s:/home/%s/yanoama/%s'%(USER,HOSTNAME,USER,NODES_DB), filename ], stdout=subprocess.PIPE, close_fds=True).communicate()[0]
+    #scp_output = subprocess.Popen(['scp', '-q','-i',key,'%s@%s:/home/%s/yanoama/%s'%(USER,hostname,USER,NODES_DB), filename ], stdout=subprocess.PIPE, close_fds=True).communicate()[0]
+    scp_output = subprocess.Popen(['scp', '-i',key,'%s@%s:/home/%s/yanoama/%s'%(USER,hostname,USER,NODES_DB), filename ], stdout=subprocess.PIPE, close_fds=True).communicate()[0]
     if len(scp_output)>0: 
-           sys.stdout.write(" .. (scp output: %s ... )"%(scp_output))
+        sys.stdout.write(" .. (scp output: %s ... )"%(scp_output))
     if os.path.isfile(filename):
         nodes_file = open(filename, "r") # read mode
         dictionary = pickle.load(nodes_file)
@@ -123,8 +123,8 @@ def update_nodes():
 
     if len(_coordinators.keys())==0:
         sys.stdout.write(" no coordinators ")
-    for HOSTNAME in _coordinators.keys():
-        fresh_nodes_list = download_nodes_list(HOSTNAME)
+    for hostname in _coordinators.keys():
+        fresh_nodes_list = download_nodes_list(hostname)
         if len(fresh_nodes_list)>0:
             sys.stdout.write("before there were %d nodes, "%(len(get_current_nodes(api, SLICE_NAME))))
             try:
@@ -137,7 +137,7 @@ def update_nodes():
 
             break
         else:
-            sys.stdout.write("empty list in %s... "%(HOSTNAME))
+            sys.stdout.write("empty list in %s... "%(hostname))
         
     
     #todo: download a list of nodes from coordinators list, then update our nodes list

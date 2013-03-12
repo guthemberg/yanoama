@@ -47,7 +47,7 @@ def get_coordinators():
         print "There was an error in your configuration file (/etc/yanoama.conf)"
         raise e
     _coordinators = config.get('coordinators', {})
-    HOSTNAME = subprocess.Popen(['HOSTNAME'], stdout=subprocess.PIPE, close_fds=True)\
+    HOSTNAME = subprocess.Popen(['hostname'], stdout=subprocess.PIPE, close_fds=True)\
     .communicate()[0].rstrip()
     del _coordinators[HOSTNAME]
     return _coordinators.keys()
@@ -109,11 +109,11 @@ if __name__ == '__main__':
     for coordinator in get_coordinators():
         peers=get_peers(coordinator)
         to_be_removed=[]
-        for HOSTNAME in peers.keys():
-            if local_peers[HOSTNAME]>peers[HOSTNAME]:
-                to_be_removed.append(HOSTNAME)
-        for HOSTNAME in to_be_removed:
-            del local_peers[HOSTNAME]
+        for hostname in peers.keys():
+            if local_peers[hostname]>peers[hostname]:
+                to_be_removed.append(hostname)
+        for hostname in to_be_removed:
+            del local_peers[hostname]
     save_to_db(local_peers)
     #log/print out to the standard output
     log('current number of members:'+len(local_peers.keys())+', done.')

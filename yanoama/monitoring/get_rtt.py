@@ -52,15 +52,9 @@ def get_latency():
         print "There was an error in your configuration file (/etc/yanoama.conf)"
         raise e
     _coordinators = config.get('coordinators', {})
-    HOSTNAME = Popen(['HOSTNAME'], stdout=PIPE, close_fds=True)\
+    HOSTNAME = Popen(['hostname'], stdout=PIPE, close_fds=True)\
         .communicate()[0].rstrip()
     return float(_coordinators.get(HOSTNAME).get('latency'))
-
-    #print api_server.AuthCheck(auth)
-#    print ple.GetPeers(auth,None,['peer_id','peername'])
-#    print "ple nodes: "+str(len(ple.GetNodes(auth,{'peer_id':None},['peer_id','HOSTNAME'])))
-#    print "plc nodes: "+str(len(ple.GetNodes(auth,{'peer_id':1},['peer_id','HOSTNAME'])))
-#    print "plj nodes: "+str(len(ple.GetNodes(auth,{'peer_id':2},['peer_id','HOSTNAME'])))
 
 #see bootstratNodesFile() for having information about the file format
 def readNodes(filename):
@@ -75,27 +69,10 @@ def saveNodes(dictionary,filename):
     pickle.dump(dictionary, nodes_file)
     nodes_file.close()
 
-#nodes file stores a dictionary with the following format
-#HOSTNAME:rtt
-#def bootstrapNodesFiles():
-#    config=ConfigObj('ple.conf')
-#    api=PlanetLabAPI(config['host'],config['username'],config['password'])
-#    ple_nodes={}
-#    for node in (api.getPLEHostnames()):
-#        ple_nodes[node['HOSTNAME']]=0
-#    saveNodes(ple_nodes,'ple_nodes.pck')
-#    plc_nodes={}
-#    for node in (api.getPLCHostnames()):
-#        plc_nodes[node['HOSTNAME']]=0
-#    saveNodes(plc_nodes,'plc_nodes.pck')
-#    nodes={}
-#    for node in (api.getHostnames()):
-#        nodes[node['HOSTNAME']]=0
-#    saveNodes(nodes,'nodes.pck')
 
-def getRTT(HOSTNAME):
+def getRTT(hostname):
     try:
-        return (float(Popen("sh "+get_install_path()+"/yanoama/monitoring/get_rtt.sh "+HOSTNAME, stdout=PIPE,shell=True).communicate()[0]))
+        return (float(Popen("sh "+get_install_path()+"/yanoama/monitoring/get_rtt.sh "+hostname, stdout=PIPE,shell=True).communicate()[0]))
     except:
         return -1
 
@@ -136,28 +113,28 @@ def getIntialNodes(cmd_args):
 
 def checkNodes(nodes,myops_nodes,bad_nodes,new_nodes=None):
     if new_nodes is not None:
-        for HOSTNAME in new_nodes:
-            rtt=getRTT(HOSTNAME)
+        for hostname in new_nodes:
+            rtt=getRTT(hostname)
             if rtt>0.0 :
-                nodes[HOSTNAME]=rtt
+                nodes[hostname]=rtt
         return
             
-    for HOSTNAME in nodes:
-        if "measurement-lab.org" in HOSTNAME:
-            bad_nodes.append(HOSTNAME)
+    for hostname in nodes:
+        if "measurement-lab.org" in hostname:
+            bad_nodes.append(hostname)
             continue
-        c_rtt = float(nodes[HOSTNAME])
-        rtt=getRTT(HOSTNAME)
+        c_rtt = float(nodes[hostname])
+        rtt=getRTT(hostname)
         if rtt>0.0 :
             if c_rtt==0.0 :
-                nodes[HOSTNAME]=rtt
+                nodes[hostname]=rtt
             elif rtt<c_rtt:
-                nodes[HOSTNAME]=rtt
+                nodes[hostname]=rtt
         else:
-            bad_nodes.append(HOSTNAME)
+            bad_nodes.append(hostname)
         #if it is in myops nodes, remove it
         try:
-            del myops_nodes[HOSTNAME]
+            del myops_nodes[hostname]
         except:
             pass
 
@@ -165,12 +142,12 @@ def save_to_db(nodes):
     db_name,port=get_db_name_and_port()
     latency=get_latency()
     too_far_nodes=[]
-    for HOSTNAME in nodes.keys():
-        if nodes[HOSTNAME]<latency:
-            too_far_nodes.append(HOSTNAME)
+    for hostname in nodes.keys():
+        if nodes[hostname]<latency:
+            too_far_nodes.append(hostname)
     #clean up bad nodes
-    for HOSTNAME in too_far_nodes:
-        del nodes[HOSTNAME]
+    for hostname in too_far_nodes:
+        del nodes[hostname]
     connection = Connection('localhost', port)
     db = connection[db_name]
     nodes_latency_measurements=db.nodes_latency_measurements
@@ -195,8 +172,8 @@ if __name__ == '__main__':
     #checking remaining potential new nodes
     checkNodes(nodes, {}, [], myops_nodes)
     #clean up bad nodes
-    for HOSTNAME in bad_nodes:
-        del nodes[HOSTNAME]
+    for hostname in bad_nodes:
+        del nodes[hostname]
     saveNodes(nodes, filename)
     save_to_db(nodes)
     log('done. ')

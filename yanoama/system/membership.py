@@ -45,7 +45,7 @@ def am_i_a_member_of_this(coordinator):
     db_name,port=get_db_name_and_port()
     connection = Connection(coordinator, port)
     db = connection[db_name]
-    HOSTNAME = subprocess.Popen(['HOSTNAME'], stdout=subprocess.PIPE, close_fds=True)\
+    HOSTNAME = subprocess.Popen(['hostname'], stdout=subprocess.PIPE, close_fds=True)\
     .communicate()[0].rstrip()
     return HOSTNAME in db['peers'].find_one({}, {'_id': False}).keys()
 

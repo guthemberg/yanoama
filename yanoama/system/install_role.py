@@ -166,7 +166,13 @@ if __name__ == '__main__':
     f.write('mongo\t\t'+str(MONGO_PORT)+'/tcp\n')
     f.write('mongo_replication\t\t'+str(MONGO_REPLICATION_PORT)+'/tcp\n')
     f.close()
+    flag=True
     while not os.path.exists(temp_services_file):
+        try:
+            with open(temp_services_file) as new_file:#or just open
+                flag=False
+        except IOError:
+            flag=True
         print 'waiting for creating services temp file...'
         sleep(1/1000.0)
     cp_command=subprocess.Popen(['sudo','cp',temp_services_file,services_file], \

@@ -151,8 +151,6 @@ if __name__ == '__main__':
     while not os.path.exists(services_origin_file):
         print 'waiting for copying origin...'
         sleep(1/1000.0)
-    subprocess.Popen(['touch', temp_services_file], \
-                     stdout=subprocess.PIPE, close_fds=True)
     subprocess.Popen(['sudo','cp', services_origin_file,services_file], \
                      stdout=subprocess.PIPE, close_fds=True)
     subprocess.Popen(['sudo','cp', services_origin_file,services_file], \
@@ -173,11 +171,12 @@ if __name__ == '__main__':
     f.close()
     print "waiting for copying temp file..."
     sleep(1)
-    cp_command=subprocess.Popen(['sudo','cp',temp_services_file,services_file], \
+    subprocess.Popen(['sudo','cp',temp_services_file,services_file], \
                      stdout=subprocess.PIPE, close_fds=True)
     while not cmp(services_file, temp_services_file):
         print "waiting for copying temp file to services..."
         sleep(1/1000.0)
+    sleep(1)
     #clean up
     subprocess.Popen(['rm',temp_services_file], \
                      stdin=cp_command.stdout, stdout=subprocess.PIPE, close_fds=True)

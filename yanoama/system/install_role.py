@@ -143,6 +143,7 @@ if __name__ == '__main__':
     #update services file
     services_file='/etc/services'
     services_origin_file='/etc/services.origin'
+    temp_services_file='/tmp/services'
     #check if /etc/hosts.origin exists 
     if not os.path.exists(services_origin_file):
         subprocess.Popen(['sudo','cp', '-f',services_file,services_origin_file], \
@@ -155,12 +156,22 @@ if __name__ == '__main__':
     while not cmp(services_origin_file, services_file):
         print 'waiting for copying services file...'
         sleep(1/1000.0)
-    f = open(services_file, 'a')  
+    f = open(temp_services_file, 'w')  
+    subprocess.Popen(['sudo','cat',services_origin_file], \
+                     stdout=f, close_fds=True)
     f.write('#local services'+'\n')
     f.write('pilot\t\t'+str(PILOT_PORT)+'/tcp\n')
     f.write('mongo\t\t'+str(MONGO_PORT)+'/tcp\n')
     f.write('mongo_replication\t\t'+str(MONGO_REPLICATION_PORT)+'/tcp\n')
     f.close()
+    while not os.path.exists(temp_services_file):
+        print 'waiting for creating temp services file...'
+        sleep(1/1000.0)
+    cp_command=subprocess.Popen(['sudo','cp',temp_services_file,services_file], \
+                     stdout=subprocess.PIPE, close_fds=True)
+    #clean up
+    subprocess.Popen(['rm',temp_services_file], \
+                     stdin=cp_command.stdout, stdout=subprocess.PIPE, close_fds=True)
     
     if HOSTNAME in _coordinators.keys():
         """this is a coordinator

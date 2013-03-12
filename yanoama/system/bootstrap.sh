@@ -83,7 +83,9 @@ if [ ! -e "/etc/services.origin" ]; then
   sudo cp /etc/services /etc/services.origin 
 fi
 if [ -e "/tmp/services" ]; then
-  sudo cat /etc/services.origin /tmp/services > /etc/services
+  cat /etc/services.origin /tmp/services > /tmp/services.1
+  sudo cp /tmp/services.1 /etc/services
+  rm -rf /tmp/services /tmp/services.1
 fi
 echo " done."    
 

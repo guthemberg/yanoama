@@ -62,7 +62,13 @@ From caju, we have the concept of
 * step-by-step deplyment based on role:
 	+ coordinator: install MongoD
 
-
+* db scheme (main collections)
+	+ yanoama.nodes_latency_measurements: raw latency 
+	measurements for membership. it contains nodes that 
+	are closer to this coordinator, according to the 
+	latency measurement. note that key are hostnames 
+	with colons instead of dots 
+	
 this is draft for the new deployment in planetlab
 	yanoama/planetlab/planetlab.py: library for planetlab API
 	yanoama/planetlab/update_slice.py: updates 'expires' time for eight more weeks

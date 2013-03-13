@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from pymongo import Connection
+from pymongo import MongoClient
 
 '''
 Created on 12 Mar 2013
@@ -47,7 +47,7 @@ class Mongo:
         self.db_name =self.kernel.get_db_name()
         self.db_port = self.kernel.get_db_port()
         self.hostname=hostname
-        self.connection = Connection(hostname, self.db_port)
+        self.connection = MongoClient(hostname, self.db_port)
         self.db=self.connection[self.db_name]
     
     def convert_dict_keys_from_dots_to_colons(self,my_dict):
@@ -106,7 +106,7 @@ class Mongo:
         if hostname == self.hostname:
             return self.db['nodes_latency_measurements'].find_one({}, {'_id': False}).copy()
         else:
-            connection = Connection(hostname, self.db_port)
+            connection = MongoClient(hostname, self.db_port)
             db=connection[self.db_name]
             return db['nodes_latency_measurements'].find_one({}, {'_id': False}).copy()
 
@@ -137,7 +137,7 @@ class Mongo:
         Returns:
         boolean -- member or not
         """
-        connection = Connection(coordinator, self.db_port)
+        connection = MongoClient(coordinator, self.db_port)
         db = connection[self.db_name]
         recovered_peers = self.recover_dict_keys_from_colons_to_dots(db['peers'].find_one({}, {'_id': False}))
         return get_hostname() in recovered_peers.keys()

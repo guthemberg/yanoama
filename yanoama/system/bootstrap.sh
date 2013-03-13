@@ -24,7 +24,7 @@ sudo /sbin/service crond start
 #cleanup user cron
 crontab -r
 #install required packages
-sudo yum -y -d0 -e0 --quiet install git-core 
+sudo yum --nogpgcheck -y -d0 -e0 --quiet install git-core 
 
 ###2nd step: check,download/update and (re)install yanoama
 ##check if yanoama is already installed
@@ -54,7 +54,7 @@ else
   sudo cp ${YANOAMA_HOME}/contrib/mongodb/fedora/10gen.repo.i686 /etc/yum.repos.d/10gen.repo
 fi
 #(b) other packages
-sudo yum -y -d0 -e0 --quiet install git-core python-simplejson mongo-10gen mongo-10gen-server pytz gcc sysstat python-devel
+sudo yum --nogpgcheck -y -d0 -e0 --quiet install git-core python-simplejson mongo-10gen mongo-10gen-server pytz gcc sysstat python-devel
 #(c) pymongo
 CUR_DIR=`pwd`
 cd /tmp

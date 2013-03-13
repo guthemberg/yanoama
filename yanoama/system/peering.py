@@ -43,8 +43,9 @@ if __name__ == '__main__':
         peers=db.get_peers(coordinator)
         to_be_removed=[]
         for hostname in peers.keys():
-            if local_peers[hostname]>peers[hostname]:
-                to_be_removed.append(hostname)
+            if local_peers.has_key(hostname):
+                if local_peers[hostname]>peers[hostname]:
+                    to_be_removed.append(hostname)
         for hostname in to_be_removed:
             del local_peers[hostname]
     db.save_peers(local_peers)

@@ -105,11 +105,11 @@ class Mongo:
     
         """
         if hostname == self.hostname:
-            return self.db['nodes_latency_measurements'].find_one({}, {'_id': False}).copy()
+            return self.recover_dict_keys_from_colons_to_dots(self.db['nodes_latency_measurements'].find_one({}, {'_id': False}).copy())
         else:
             connection = MongoClient(hostname, self.db_port)
             db=connection[self.db_name]
-            return db['nodes_latency_measurements'].find_one({}, {'_id': False}).copy()
+            return self.recover_dict_keys_from_colons_to_dots(db['nodes_latency_measurements'].find_one({}, {'_id': False}).copy())
 
     def save_peers(self,nodes):  
         """Save the current list of member nodes to the

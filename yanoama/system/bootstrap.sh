@@ -93,7 +93,11 @@ if [ -e "$ROLE_FILE" ]; then
   if [ `cat $ROLE_FILE` = "coordinator" ]; then
 	  sudo cp ${YANOAMA_HOME}/contrib/mongodb/mongod.conf /etc/mongod.conf
 	  sudo /sbin/chkconfig mongod on
-	  sudo /sbin/service mongod start
+    if [ `pgrep -f mongod|wc -l` -ge 1 ]; then
+	    sudo /sbin/service mongod restart
+    else
+	    sudo /sbin/service mongod start
+    fi
   fi
   sudo cp $ROLE_FILE /etc/
   rm $ROLE_FILE

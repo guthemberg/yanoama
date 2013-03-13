@@ -124,7 +124,7 @@ class Mongo:
         """
         peers=self.db.peers
         peers.drop()
-        peers.insert(nodes)
+        peers.insert(self.convert_dict_keys_from_dots_to_colons(nodes))
 
     def am_i_a_member_of_this(self,coordinator):  
         """Checks if this node is member of the

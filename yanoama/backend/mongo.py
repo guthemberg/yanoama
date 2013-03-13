@@ -25,7 +25,8 @@ def get_install_path():
 
 import sys
 try:
-    from yanoama.core.essential import get_hostname
+    from yanoama.core.essential import Essential,\
+                                get_hostname
 except ImportError:
     sys.path.append(get_install_path()) 
     from yanoama.core.essential import Essential,\

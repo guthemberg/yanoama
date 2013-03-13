@@ -21,7 +21,8 @@ import os
 import sys
 
 try:
-    from yanoama.core.essential import Essential
+    from yanoama.core.essential import Essential, \
+                    install_cron_job, get_hostname
 except ImportError:
     sys.path.append(get_install_path()) 
     #import yanoama modules alternatively

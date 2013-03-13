@@ -18,7 +18,9 @@ def get_install_path():
 
 
 try:
-    from yanoama.core.essential import Essential
+    from yanoama.core.essential import Essential, \
+                    check_hostname, log, build_hosts_file
+    from yanoama.backend.mongo import Mongo
 except ImportError:
     sys.path.append(get_install_path()) 
     #import yanoama modules alternatively

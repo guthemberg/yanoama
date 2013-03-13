@@ -21,6 +21,10 @@ def get_install_path():
 
 try:
     from yanoama.planetlab.planetlab import MyOps
+    from yanoama.backend.mongo import Mongo
+    from yanoama.core.essential import log,\
+            online,saveNodes,getIntialNodes,\
+            checkNodes
 except ImportError:
     sys.path.append(get_install_path()) 
     #import yanoama modules alternatively

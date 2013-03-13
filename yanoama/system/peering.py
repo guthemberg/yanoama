@@ -50,4 +50,4 @@ if __name__ == '__main__':
             del local_peers[hostname]
     db.save_peers(local_peers)
     #log/print out to the standard output
-    log('current number of members:'+len(local_peers.keys())+', done.')
+    log('current number of members:'+str(len(local_peers.keys()))+', done.')

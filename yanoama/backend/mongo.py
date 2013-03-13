@@ -76,6 +76,7 @@ class Mongo:
         #not accept keys with dots 
         converted_nodes=self.convert_dict_keys_from_dots_to_colons(nodes)
         latency=self.kernel.get_latency()
+        print latency
         too_far_nodes=[]
         for hostname in converted_nodes.keys():
             if converted_nodes[hostname]<latency:
@@ -86,6 +87,7 @@ class Mongo:
         nodes_latency_measurements=self.db.nodes_latency_measurements
         nodes_latency_measurements.drop()
         nodes_latency_measurements.insert(converted_nodes)
+        print len(converted_nodes.keys())
 
     def get_peers(self,hostname='localhost'):  
         """Connects to a coordinator MongoBD database

@@ -73,15 +73,14 @@ class Mongo:
         #clean up 
         for hostname in hostname_list:
             del nodes[hostname]
-        return nodes
 
     def remove_indexes_nodes(self,indexes_list,nodes):
         #clean up 
         hostname_list=[]
         hostnames=nodes.keys()
         for index in indexes_list:
-            hostname_list.append(nodes[hostnames[index]])
-        return self.cleanup_nodes(hostname_list, nodes)
+            hostname_list.append(hostnames[index])
+        self.cleanup_nodes(hostname_list, nodes)
         
     def save_raw_nodes(self,nodes):
         #this randomly selects nodes 
@@ -98,10 +97,7 @@ class Mongo:
             if converted_nodes[hostname]>latency:
                 too_far_nodes.append(hostname)
         #clean up 
-        print len(converted_nodes)
         self.cleanup_nodes(too_far_nodes, converted_nodes)
-        print converted_nodes
-        print len(converted_nodes)
         #pick nodes randomly
         start=0
         stop=len(converted_nodes)

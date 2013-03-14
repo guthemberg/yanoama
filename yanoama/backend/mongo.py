@@ -98,7 +98,10 @@ class Mongo:
             if converted_nodes[hostname]>latency:
                 too_far_nodes.append(hostname)
         #clean up 
+        print len(converted_nodes)
         self.cleanup_nodes(too_far_nodes, converted_nodes)
+        print converted_nodes
+        print len(converted_nodes)
         #pick nodes randomly
         start=0
         stop=len(converted_nodes)

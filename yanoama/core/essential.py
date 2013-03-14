@@ -66,7 +66,7 @@ class Essential:
         self.pilot_port=_pilot.get('port',44444)
 
     def get_group_size(self,coordinator):
-        return self.coordinators.get('group_size')
+        return self.coordinators.get(coordinator).get('group_size')
     
     def is_coordinator(self,hostname):
         return hostname in self.coordinators

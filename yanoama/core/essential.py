@@ -65,6 +65,12 @@ class Essential:
         _pilot = config.get('pilot', {})
         self.pilot_port=_pilot.get('port',44444)
 
+    def get_group_size(self,coordinator):
+        return self.coordinators.get('group_size')
+    
+    def is_coordinator(self,hostname):
+        return hostname in self.coordinators
+    
     def get_deployment_path(self):
         return self.deployment_path
 

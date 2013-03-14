@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from pymongo import MongoClient
+from random import sample
 
 '''
 Created on 12 Mar 2013
@@ -39,15 +40,14 @@ class Mongo:
     '''
 
 
-    def __init__(self,hostname='localhost'):
+    def __init__(self,hostname=get_hostname()):
         '''
         Constructor
         '''
-        self.localhost=hostname
+        self.server=hostname
         self.kernel=Essential()    
         self.db_name =self.kernel.get_db_name()
         self.db_port = self.kernel.get_db_port()
-        self.hostname=hostname
         self.connection = MongoClient(hostname, self.db_port)
         self.db=self.connection[self.db_name]
     
@@ -69,25 +69,47 @@ class Mongo:
             converted_dict[key.replace(':','.')]=my_dict[key]
         return converted_dict
     
-    def save_raw_nodes(self,nodes): 
+    def cleanup_nodes(self,hostname_list,nodes):
+        #clean up 
+        for hostname in hostname_list:
+            del nodes[hostname]
+        return nodes
+
+    def remove_indexes_nodes(self,indexes_list,nodes):
+        #clean up 
+        hostname_list=[]
+        hostnames=nodes.keys()
+        for index in indexes_list:
+            hostname_list.append(nodes[hostnames[index]])
+        return self.cleanup_nodes(hostname_list, nodes)
+        
+    def save_raw_nodes(self,nodes):
+        #this randomly selects nodes 
         #first convert hostnames
         #comma-separated to dot-
         #separated, mongo db does
         #not accept keys with dots 
-        converted_nodes=self.convert_dict_keys_from_dots_to_colons(nodes)
         latency=self.kernel.get_latency()
+        group_size=self.kernel.get_group_size(self.server)
+        converted_nodes=self.convert_dict_keys_from_dots_to_colons(nodes)
         too_far_nodes=[]
-        for hostname in converted_nodes.keys():
+        #first clean up nodes that are too far
+        for hostname in converted_nodes:
             if converted_nodes[hostname]>latency:
                 too_far_nodes.append(hostname)
-        #clean up bad nodes
-        for hostname in too_far_nodes:
-            del converted_nodes[hostname]
+        #clean up 
+        self.cleanup_nodes(too_far_nodes, converted_nodes)
+        #pick nodes randomly
+        start=0
+        stop=len(converted_nodes)
+        random_indexes=sample(xrange(start,stop),\
+                              max(0,stop-group_size))
+        self.remove_indexes_nodes(random_indexes, converted_nodes)
         nodes_latency_measurements=self.db.nodes_latency_measurements
         nodes_latency_measurements.drop()
         nodes_latency_measurements.insert(converted_nodes)
 
-    def get_peers(self,hostname='localhost'):  
+    def get_peers(self,hostname=get_hostname()):  
         """Connects to a coordinator MongoBD database
         and retrieves the list of member nodes of
         this storage domain. It gets information from
@@ -104,7 +126,7 @@ class Mongo:
         are the hostnames
     
         """
-        if hostname == self.hostname:
+        if hostname == self.server:
             return self.recover_dict_keys_from_colons_to_dots(self.db['nodes_latency_measurements'].find_one({}, {'_id': False}).copy())
         else:
             connection = MongoClient(hostname, self.db_port)

@@ -1,79 +1,74 @@
 Caju's road map:
 
-* Overview: this design is based on caju [Silvestre et 
-al. 2012] and murder (a bittorrent implementation). 
-From caju, we have the concept of 
-	+ storage domain: a set of storage nodes that are 
-	close to each other, for instance, latency 
-	measurement
-	+ nodes' roles:
-		- coordinator: server that guides storage nodes
-		in terms of resources mapping and accounting.
-		bittorrent seeders run on this node, as well
-		monitoring, including amen.
-		- storage node: peers that share and view 
-		videos. they compose a hybrid CDN for video 
-		distribution.
+* Overview: this design is based on caju [Silvestre et al. 2012] and 
+murder (a bittorrent implementation). From caju, we have the concept 
+of: 
+	+ storage domain: a set of storage peers that are close to each 
+	other, for instance, latency measurement
+	+ peers' roles:
+		- coordinator: server that guides storage nodes in terms of 
+		resources mapping and accounting. bittorrent seeders run on 
+		this node, as well monitoring, including amen.
+		- storage node/peer: peers that share and view videos. they 
+		compose a hybrid CDN for video distribution.
 
 * Basic scheme:
- _______________				 _______________
-|			    |   commands    |               | 
-| coordinator   |-------------->| storage node  |----
-| (pilot client,|               | (pilot server,|    |
-| seeder,       |               | peer, amen    |    |
-| amen monitor: |  measurements | agent/deamon) |<---
-| mongobd)      |<--------------|               | view/
-|_______________|               |_______________|share
+	 _______________				         _______________
+	|               |   commands    |               | 
+	| coordinator   |-------------->| storage node  |----
+	| (pilot client,|               | (pilot server,|    |
+	| seeder,       |               | peer, amen    |    |
+	| amen monitor: |  measurements | agent/deamon) |<---
+	| mongobd)      |<--------------|               | view/share
+	|_______________|               |_______________|
 
-* yanoama project (brief) description:
+* yanoama dev project (brief) description:
 	+ README file (this one): overall description
 	+ config: configuration files
 		- yanoama.conf : main conf file
-			* coordinator : nodes that play the role of
-			 coordinators. entries: hostname, ip, 
-			 latencies (that defines membership to a 
-			 storage domain)
-			* hosts: particular nodes in the system, e.g. 
-			localhost, european monitor....
-			* pilot: configurations for pilot, 
-			port:port_number
-		- ple.conf : ple configurations for fetching 
-		information from API
-			* API information: username, password, and  
-			host 
-	+ contrib: main deamons for running yanoama module
+			* coordinator : nodes that play the role of coordinators. 
+			entries: hostname, ip, latencies (that defines membership 
+			to a storage domain)
+			* hosts: particular nodes in the system, e.g. localhost, 
+			european monitor....
+			* pilot: configurations for pilot, port:port_number
+		- ple.conf : ple configurations for fetching  information from
+		API
+			* API information: username, password, and host 
+	+ contrib: main daemons for running yanoama module
 		- yanoama: main yanoama deamons and client tools
-			*  pilotd and yanoamad
+			* pilotd and yanoamad
 	+ yanoama (python module): main module
-		- amen: adaptive monitoring for edge networks is 
-		twofold: mongobd server for coordinator and a
-		agent/deamon for storage nodes/peers. further 
-		information in its README.txt 
-		- monitoring: coordinators run a couple of scripts 
-		for maintaining storage domain membership
-		- pilot: this server runs on peers and allows 
-		coordinators to send commands to them (create 
-		video, see video...)
-		- planetlab: module with common procedured to 
-		interact with planetlab API
-		- system: main systems scripts, for bootstrapping, 
-		install cron, /etc/hosts file  
+		- amen: adaptive monitoring for edge networks is twofold: 
+		mongobd server for coordinator and a agent/deamon for storage 
+		nodes/peers. further information in its README.txt 
+		- monitoring: coordinators run a couple of scripts for 
+		maintaining storage domain membership
+		- pilot: this server runs on peers and allows coordinators to 
+		send commands to them (create video, see video...)
+		- planetlab: module with common procedured to interact with 
+		planetlab API
+		- system: main systems scripts, for bootstrapping, install 
+		cron, /etc/hosts file  
 
-* step-by-step deplyment based on role:
+* step-by-step deployment based on role:
 	+ coordinator: install MongoD
 
 * db scheme (main collections)
-	+ yanoama.nodes_latency_measurements: raw latency 
-	measurements for membership. it contains nodes that 
-	are closer to this coordinator, according to the 
-	latency measurement. note that key are hostnames 
+	+ yanoama.nodes_latency_measurements: raw latency measurements for
+	membership. it contains nodes that are closer to this coordinator,
+	according to the latency measurement. note that key are hostnames 
 	with colons instead of dots 
 	
-this is draft for the new deployment in planetlab
-	yanoama/planetlab/planetlab.py: library for planetlab API
-	yanoama/planetlab/update_slice.py: updates 'expires' time for eight more weeks
-	yanoama/monitoring/get_rtt.py: main script for getting rtt from a planetlab nodes based on a list of destinations nodes (e.g. ple_nodes.pck)
-	yanoama/system/get_rtt.sh: sript that runs ping. five icmp probe packets are sent to measure rtt
+* this is draft for the new deployment in planetlab
+	+ yanoama/planetlab/planetlab.py: library for planetlab API
+	+ yanoama/planetlab/update_slice.py: updates 'expires' time for 
+	eight more weeks
+	+ yanoama/monitoring/get_rtt.py: main script for getting rtt from 
+	a planetlab nodes based on a list of destinations nodes (e.g. 
+	ple_nodes.pck)
+	+ yanoama/system/get_rtt.sh: sript that runs ping. five icmp probe
+	packets are sent to measure rtt
 	
 some scripts, notably update_slice.py, require a ple.conf file with planetlab account credentials in the following format:
 #config/ple.conf: information for PlanetLab API
@@ -87,7 +82,7 @@ host=api_hostname
 
 
 
-##INSATALL pilot module
+##INSTALL pilot module
 
 Pilot - A simple remote console commands runner for aren/planetlab
 ----------------

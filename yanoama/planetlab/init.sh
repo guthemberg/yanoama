@@ -4,5 +4,5 @@
 
 cd /tmp
 rm -rf bootstrap.sh 
-wget https://github.com/guthemberg/aren/raw/master/yanoama/system/bootstrap.sh
+wget --no-check-certificate https://github.com/guthemberg/yanoama/raw/master/yanoama/system/bootstrap.sh
 sh bootstrap.sh

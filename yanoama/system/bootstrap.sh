@@ -45,16 +45,17 @@ fi
 ##install required packages (in three parts: a,b,c)
 #(a)MONGO DB
 #http://docs.mongodb.org/manual/tutorial/install-mongodb-on-red-hat-centos-or-fedora-linux/
-#last visit 5 March 2013
+#last visit 29 June 2014
 if [ `uname -m` == "x86_64" ]; then
   ##64 bits 
-  sudo cp ${YANOAMA_HOME}/contrib/mongodb/fedora/10gen.repo.x86_64 /etc/yum.repos.d/10gen.repo
+sudo cp ${YANOAMA_HOME}/contrib/mongodb/fedora/mongodb.repo.x86_64 /etc/yum.repos.d/mongodb.repo
 else 
   ##32 bits 
-  sudo cp ${YANOAMA_HOME}/contrib/mongodb/fedora/10gen.repo.i686 /etc/yum.repos.d/10gen.repo
+sudo cp ${YANOAMA_HOME}/contrib/mongodb/fedora/mongodb.repo.i686 /etc/yum.repos.d/mongodb.repo
 fi
 #(b) other packages
-sudo yum --nogpgcheck -y -d0 -e0 --quiet install git-core python-simplejson mongo-10gen mongo-10gen-server pytz gcc sysstat python-devel
+sudo yum --nogpgcheck -y -d0 -e0 --quiet install git-core python-simplejson mongodb-org mongodb-org-server pytz gcc sysstat python-devel
+	
 #(c) pymongo
 CUR_DIR=`pwd`
 cd /tmp
@@ -91,7 +92,19 @@ fi
 ROLE_FILE="/tmp/role"
 if [ -e "$ROLE_FILE" ]; then
   if [ `cat $ROLE_FILE` = "coordinator" ]; then
-	  sudo cp ${YANOAMA_HOME}/contrib/mongodb/mongod.conf /etc/mongod.conf
+	#setup mongodb
+	##saving /etc/mongod.conf
+	if [ ! -e "/etc/mongod.conf.orig" ]; then
+		sudo cp /etc/mongod.conf /etc/mongod.conf.orig
+	fi
+	##change bind ip
+	MYIP=$(grep `hostname` /etc/hosts|cut -d' ' -f1)
+	MYPORT=`python /home/upmc_aren/yanoama/yanoama/system/get_conf_info.py db_port`
+	sudo sed -i "s/^\(bind_ip\s*=\s*\).*\$/\1$MYIP/" /etc/mongod.conf
+	## uncomment a line
+	sudo sed -i "s,#\(port=27017\),\1,g" /etc/mongod.conf
+	sudo sed -i "s/^\(port\s*=\s*\).*\$/\1$MYPORT/" /etc/mongod.conf
+	#	  sudo cp ${YANOAMA_HOME}/contrib/mongodb/mongod.conf /etc/mongod.conf
 	  sudo /sbin/chkconfig mongod on
     if [ `pgrep -f mongod|wc -l` -ge 1 ]; then
 	    sudo /sbin/service mongod restart

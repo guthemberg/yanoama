@@ -1,3 +1,15 @@
-Installation guide
+#Installation guide
+#the following steps must be performed in all nodes (this suggests that init.sh
+#must be installed as a planetlab init script)
+#For validation, a start point is the 
 
- 
+
+#REQUIREMENTS: copy yanoama/config/ple.conf to install_dest_machine:/etc/
+
+#1) run initialization script
+##fetch/transfer and run the initialization script
+##from dev. workstation
+##scp yanoama/planetlab/init.sh dest_node:/tmp/
+##from dest. installation node
+
+sh /tmp/init.sh

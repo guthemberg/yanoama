@@ -42,4 +42,6 @@ miscelanous:
 	information for membership. basically, it
 	prints out a ordered list of testbed nodes
 	based on latency
+	*get_conf_info: return information from conf files (e.g. to get db port, run
+	python get_conf_info.py db_port)
 			

@@ -21,6 +21,7 @@ if [ `pgrep -f pilotd|wc -l` -ge 1 ] && [ $python_version_flag -eq 0 ]; then
 fi
 #requirement, start cron
 sudo /sbin/service crond start
+sudo /sbin/chkconfig crond on
 #cleanup user cron
 crontab -r
 #install required packages
@@ -105,12 +106,14 @@ if [ -e "$ROLE_FILE" ]; then
 	sudo sed -i "s,#\(port=27017\),\1,g" /etc/mongod.conf
 	sudo sed -i "s/^\(port\s*=\s*\).*\$/\1$MYPORT/" /etc/mongod.conf
 	#	  sudo cp ${YANOAMA_HOME}/contrib/mongodb/mongod.conf /etc/mongod.conf
-	  sudo /sbin/chkconfig mongod on
+	sudo /sbin/chkconfig mongod on
+	sudo /sbin/chkconfig mongod on
     if [ `pgrep -f mongod|wc -l` -ge 1 ]; then
 	    sudo /sbin/service mongod restart
     else
 	    sudo /sbin/service mongod start
     fi
+    
   fi
   sudo cp $ROLE_FILE /etc/
   rm $ROLE_FILE

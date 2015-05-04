@@ -1,5 +1,24 @@
 Caju's road map:
 
+IMPORTANT NOTE: to fix problem with yum on planetlab nodes run
+sudo sed -i 's/https/http/g' /etc/yum.repos.d/*
+
+#IMPORTANT NOTE ABOUT CRON
+#edit /etc/pam.d/crond to fix problem with cron, its content must be as follows
+#
+# The PAM configuration file for the cron daemon
+#
+#
+# No PAM authentication called, auth modules not needed
+auth required pam_rootok.so
+account required pam_localuser.so
+session required pam_loginuid.so 
+#account    required   pam_access.so
+#account    include    password-auth
+#session    required   pam_loginuid.so
+#session    include    password-auth
+#auth       include    password-auth
+
 * Overview: this design is based on caju [Silvestre et al. 2012] and 
 murder (a bittorrent implementation). From caju, we have the concept 
 of: 

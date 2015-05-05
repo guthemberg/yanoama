@@ -56,7 +56,7 @@ fi
 #check if pilot is running and try to stop
 if [ `pgrep -f pilotd|wc -l` -ge 1 ] && [ $python_version_flag -eq 0 ]; then
   chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
-  sudo /usr/local/bin/python2.7 ${YANOAMA_HOME}/contrib/yanoama/pilotd stop
+  sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd stop
 fi
 #requirement, start cron
 sudo /sbin/service crond start
@@ -165,16 +165,16 @@ if [ ! -d "$log_dir" ]; then
 elif [ $python_version_flag -eq 0 ]; then
   #if there is python right version
   echo "running the server."
-  sudo /usr/local/bin/python2.7 ${YANOAMA_HOME}/contrib/yanoama/pilotd start
+  sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
 elif [ $python_version_flag -eq 1 ]; then
   #wait 2 minutes before restart (for cleaning up connection stalled connections)
   echo -n "sleeping (2min)... "
   if [ `pgrep -f pilotd|wc -l` -ge 1 ]; then
-    sudo /usr/local/bin/python2.7 ${YANOAMA_HOME}/contrib/yanoama/pilotd stop
+    sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd stop
   fi
   sleep 120
   echo "get up."
-  sudo /usr/local/bin/python2.7 ${YANOAMA_HOME}/contrib/yanoama/pilotd start
+  sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
 fi
 echo "done."
 

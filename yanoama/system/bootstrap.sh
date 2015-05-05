@@ -11,13 +11,52 @@ HOME=~
 YANOAMA_HOME=${HOME}/yanoama
 cd $HOME
 #check if the system has required python version
-#that means 2.6.x or higher
-python_version_flag=`python -c 'import sys; print("%i" % (sys.hexversion<=0x02060000))'`
+#that means 2.7.x or higher
+python_version_flag=`python -c 'import sys; print("%i" % (sys.hexversion<=0x02070000))'`
+
 echo "python version check result: $python_version_flag"
+
+# if version is lower, upgrade it
+#requirements
+sudo yum --nogpgcheck -y -d0 -e0 --quiet groupinstall "Development tools"
+sudo yum --nogpgcheck -y -d0 -e0 --quiet install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel
+
+#1 means python older than 2.7, so upgrade is required
+if [ [ $python_version_flag -eq 1 ]; then
+	CUR_DIR=`pwd`
+	cd /tmp
+	if [ ! -e "/etc/ld.so.conf.origin" ]; then
+	  sudo cp /etc/ld.so.conf /etc/ld.so.conf.origin 
+	fi
+	sudo su -c 'cp /etc/ld.so.conf.origin /etc/ld.so.conf'
+	sudo su -c "echo '/usr/local/lib' >> /etc/ld.so.conf"
+	wget https://www.python.org/ftp/python/2.7.8/Python-2.7.8.tgz
+	tar xf Python-2.7.8.tgz
+	cd Python-2.7.8
+	./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared LDFLAGS="-Wl,-rpath /usr/local/lib"
+	cd /tmp
+	wget https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py
+	sudo su -c '/usr/local/bin/python2.7 ez_setup.py'
+	sudo easy_install-2.7 pip
+	sudo pip2.7 install virtualenv
+#sudo easy_install pip
+#cd /tmp
+#git clone git://github.com/mongodb/mongo-python-driver.git pymongo
+#cd pymongo
+#sudo python setup.py install
+	cd $CUR_DIR
+#activating python 2.7
+	virtualenv --python=python2.7 ~/python_env
+	source ~/python_env/bin/activate
+else
+	mkdir -p ~/python_env/bin/
+	ln -s /usr/bin/python ~/python_env/bin/
+fi
+
 #check if pilot is running and try to stop
 if [ `pgrep -f pilotd|wc -l` -ge 1 ] && [ $python_version_flag -eq 0 ]; then
   chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
-  sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd stop
+  sudo /usr/local/bin/python2.7 ${YANOAMA_HOME}/contrib/yanoama/pilotd stop
 fi
 #requirement, start cron
 sudo /sbin/service crond start
@@ -58,12 +97,8 @@ fi
 sudo yum --nogpgcheck -y -d0 -e0 --quiet install git-core python-simplejson mongodb-org mongodb-org-server pytz gcc sysstat python-devel
 	
 #(c) pymongo
-CUR_DIR=`pwd`
-cd /tmp
-git clone git://github.com/mongodb/mongo-python-driver.git pymongo
-cd pymongo
-sudo python setup.py install
-cd $CUR_DIR
+sudo pip install pymongo
+sudo pip install simple_json
 
 #for any update, run "git pull"
 #copy the main script and conf file
@@ -130,16 +165,16 @@ if [ ! -d "$log_dir" ]; then
 elif [ $python_version_flag -eq 0 ]; then
   #if there is python right version
   echo "running the server."
-  sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
+  sudo /usr/local/bin/python2.7 ${YANOAMA_HOME}/contrib/yanoama/pilotd start
 elif [ $python_version_flag -eq 1 ]; then
   #wait 2 minutes before restart (for cleaning up connection stalled connections)
   echo -n "sleeping (2min)... "
   if [ `pgrep -f pilotd|wc -l` -ge 1 ]; then
-    sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd stop
+    sudo /usr/local/bin/python2.7 ${YANOAMA_HOME}/contrib/yanoama/pilotd stop
   fi
   sleep 120
   echo "get up."
-  sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
+  sudo /usr/local/bin/python2.7 ${YANOAMA_HOME}/contrib/yanoama/pilotd start
 fi
 echo "done."
 

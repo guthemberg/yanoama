@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#!/home/upmc_aren/python_env/bin/python
+
 ### BEGIN INIT INFO
 # Provides:          amend
 # Default-Start:     2 3 4 5

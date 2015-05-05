@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#!/home/upmc_aren/python_env/bin/python
+
 #-------------------------------------------------------------------------------
 # Name:        client.py
 # Purpose:     Pilot client for remote commands on planetlab nodes

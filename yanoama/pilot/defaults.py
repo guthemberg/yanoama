@@ -1,3 +1,5 @@
+#!/home/upmc_aren/python_env/bin/python
+
 from yanoama.pilot.system._linux import LinuxSystemConsole
 
 try:

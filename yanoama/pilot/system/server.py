@@ -1,4 +1,5 @@
-#! /usr/bin/python
+#!/home/upmc_aren/python_env/bin/python
+
 #-------------------------------------------------------------------------------
 # Name:        server.py
 # Purpose:     Pilot server for remote commands on planetlab nodes

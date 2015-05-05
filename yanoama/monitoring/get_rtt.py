@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#!/home/upmc_aren/python_env/bin/python
+
 import sys
 #for reding conf files easly, got from http://www.voidspace.org.uk/python/configobj.html, please add it as dependency
 #from planetlab import PlanetLabAPI

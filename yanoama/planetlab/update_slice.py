@@ -1,4 +1,5 @@
-#! /usr/bin/env python
+#!/home/upmc_aren/python_env/bin/python
+
 
 import traceback,time,pickle,os,subprocess,sys
 sys.path.append('/home/guthemberg/Documents/workplace/yanoama/yanoama/planetlab/')

@@ -357,7 +357,7 @@ def getIntialNodes(username,password,host,slice,key,cmd_args):
             try:
                 myops_nodes=MyOps().getAvailableNodes()
                 #print 'getting monitor data'
-                monitor_nodes=Monitor(username,password,host,myops_nodes.keys()).getHealthyNodes()
+                monitor_nodes=Monitor(username,password,host,slice,key,myops_nodes.keys()).getHealthyNodes()
                 print 'merging nodes'
                 nodes=dict(myops_nodes.items()+monitor_nodes.items())
             except Exception as e: 

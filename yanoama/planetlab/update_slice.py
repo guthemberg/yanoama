@@ -2,7 +2,7 @@
 
 
 import traceback,time,pickle,os,subprocess,sys
-sys.path.append('/home/guthemberg/Documents/workplace/yanoama/yanoama/planetlab/')
+sys.path.append('/Users/gdasilva/Documents/workplace/yanoama/yanoama/planetlab/')
 from datetime import datetime
 from time import mktime
 from planetlab import PlanetLabAPI
@@ -24,34 +24,34 @@ USER="upmc_aren"
 SLICE_NAME=USER
 TUNNEL="%d:%s:%d"%(TUNNEL_PORT,END_SERVER,END_PORT)
 SHIFT_TIME=8*7*24*60*60 #eight weeks in seconds
-ORANGE_IP='10.193.128.101'
+# ORANGE_IP='10.193.128.101'
 NODES_DB='nodes.pck'
 TMP_DIR='/tmp'
 PLE_CONF_FILE='/etc/ple.conf'
 
-def get_main_ip():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(('google.com', 0))
-    return s.getsockname()[0]
+# def get_main_ip():
+#     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#     s.connect(('google.com', 0))
+#     return s.getsockname()[0]
     
-def is_at_orange_labs():
-    ##there is a exeption here,
-    ##if we are in Orange labs, set up a 
-    #tunnel to avoid proxy headaches
-    #if ORANGE_IP in gethostbyname_ex(gethostname())[2]:
-    if ORANGE_IP == get_main_ip():
-        #print gethostbyname_ex(gethostname())[2]
-        #print "ORANGE! :(
-        return True
-    return False
+# def is_at_orange_labs():
+#     ##there is a exeption here,
+#     ##if we are in Orange labs, set up a 
+#     #tunnel to avoid proxy headaches
+#     #if ORANGE_IP in gethostbyname_ex(gethostname())[2]:
+#     if ORANGE_IP == get_main_ip():
+#         #print gethostbyname_ex(gethostname())[2]
+#         #print "ORANGE! :(
+#         return True
+#     return False
 
 def get_ple_api():
     config=ConfigObj(PLE_CONF_FILE)
     api=None
-    if is_at_orange_labs():
-        api=PlanetLabAPI(config['username'],config['password'],TUNNEL_HOST,8443)
-    else:
-        api=PlanetLabAPI(config['username'],config['password'],config['host'])
+#     if is_at_orange_labs():
+#         api=PlanetLabAPI(config['username'],config['password'],TUNNEL_HOST,8443)
+#     else:
+    api=PlanetLabAPI(config['username'],config['password'],config['host'])
     return api
 
 def renew_slice():
@@ -150,24 +150,24 @@ if __name__ == '__main__':
     
     config=ConfigObj(PLE_CONF_FILE)
     key=config['key']
-    if is_at_orange_labs():
-        #create config file for orange labs
-        subprocess.Popen(['cp','/home/guthemberg/.ssh/config_that_works','/home/guthemberg/.ssh/config'], stdout=subprocess.PIPE, close_fds=True)
-        #run a tunnel in background
-        subprocess.Popen(['ssh','-f','-i',key,'-L',TUNNEL,'%s@%s'%(USER,SSH_PROXY),'-N' ], stdout=subprocess.PIPE, close_fds=True)
-        #wait five seconds before connecting to the API (for tunnel set-up)
-        print "...zzz..."
-        time.sleep(5)
-    else:
-        #delete config for orange
-        subprocess.Popen(['rm','-f','/home/guthemberg/.ssh/config'], stdout=subprocess.PIPE, close_fds=True)
+#     if is_at_orange_labs():
+#         #create config file for orange labs
+#         subprocess.Popen(['cp','/home/guthemberg/.ssh/config_that_works','/home/guthemberg/.ssh/config'], stdout=subprocess.PIPE, close_fds=True)
+#         #run a tunnel in background
+#         subprocess.Popen(['ssh','-f','-i',key,'-L',TUNNEL,'%s@%s'%(USER,SSH_PROXY),'-N' ], stdout=subprocess.PIPE, close_fds=True)
+#         #wait five seconds before connecting to the API (for tunnel set-up)
+#         print "...zzz..."
+#         time.sleep(5)
+#     else:
+#         #delete config for orange
+#         subprocess.Popen(['rm','-f','/home/guthemberg/.ssh/config'], stdout=subprocess.PIPE, close_fds=True)
     
     #main functions
     renew_slice()
     update_nodes()
     
-    if is_at_orange_labs():
-        #before say goodbye, shutdown the tunnel
-        subprocess.Popen(['pkill', '-f',TUNNEL ], stdout=subprocess.PIPE, close_fds=True)
+#     if is_at_orange_labs():
+#         #before say goodbye, shutdown the tunnel
+#         subprocess.Popen(['pkill', '-f',TUNNEL ], stdout=subprocess.PIPE, close_fds=True)
     print "[%s]:finished."%(str(datetime.now()))  
     sys.exit(0)

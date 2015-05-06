@@ -33,6 +33,9 @@ class PlanetLabAPI:
     def getPLCHostnames(self):
         return (self.api.GetNodes(self.auth,{'peer_id':1},['hostname']))
 
+    def getPLCBootNodes(self):
+        return (self.api.GetNodes(self.auth,{'peer_id':1,'boot_state':'BOOT'},['node_id','hostname']))
+
     def getSliceHostnames(self,slice_name):
         node_ids = (self.api.GetSlices(self.auth,slice_name,['node_ids']))[0]['node_ids']
         nodes_dic=self.getNodesIdsAndNames()

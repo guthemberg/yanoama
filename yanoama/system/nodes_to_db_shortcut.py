@@ -8,6 +8,11 @@ try:
 except ImportError:
     import simplejson as json
 
+from configobj import ConfigObj
+
+PLE_CONF_FILE='/etc/ple.conf'
+
+
 #looking for yanoama module
 def get_install_path():
     try:
@@ -39,7 +44,8 @@ if __name__ == '__main__':
         log('offline')
         sys.exit(-1)
     log('run get_rtt... ')
-    nodes,filename=getIntialNodes(sys.argv)   
+    config=ConfigObj(PLE_CONF_FILE)
+    nodes,filename=getIntialNodes(config['username'],config['password'],config['host'],sys.argv)   
     print "nodes:"+str(len(nodes))
     db=Mongo()
     db.save_raw_nodes(nodes)

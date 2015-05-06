@@ -3,6 +3,7 @@
 import xmlrpclib
 #working with http data. further information in http://docs.python.org/3.1/howto/urllib2.html
 from urllib2 import urlopen
+import subprocess
 #bola
 
 class PlanetLabAPI:
@@ -33,8 +34,8 @@ class PlanetLabAPI:
     def getPLCHostnames(self):
         return (self.api.GetNodes(self.auth,{'peer_id':1},['hostname']))
 
-    def getPLCBootNodes(self):
-        return (self.api.GetNodes(self.auth,{'peer_id':1,'boot_state':'boot'},['node_id','hostname']))
+    def getBootNodes(self):
+        return (self.api.GetNodes(self.auth,{'boot_state':'boot'},['hostname']))
 
     def getSliceHostnames(self,slice_name):
         node_ids = (self.api.GetSlices(self.auth,slice_name,['node_ids']))[0]['node_ids']
@@ -63,7 +64,7 @@ class MyOps:
         self.status_table={}
         self.myops_plc_url="http://monitor.planet-lab.org/monitor/"
         self.myops_ple_url="http://www.planet-lab.eu/monitor/"
-        
+            
     def getNodesStatus(self):
         #query output
         #hostname,observed_status,
@@ -76,28 +77,35 @@ class MyOps:
         self.status_table={}
         
         #PLE information
-        ple_nodes_status = urlopen(self.myops_ple_url+query)
-        line=ple_nodes_status.readline()
-        #get rid of header
-        if line.split(',')[0] == 'hostname' and line.split(',')[1] == 'observed_status':
+        try:
+            
+            ple_nodes_status = urlopen(self.myops_ple_url+query)
             line=ple_nodes_status.readline()
-        while line:
-            if len(line.split(',')) == 3:
-                self.status_table[line.split(',')[0]]=line.split(',')[1]
-            line=ple_nodes_status.readline()            
+            #get rid of header
+            if line.split(',')[0] == 'hostname' and line.split(',')[1] == 'observed_status':
+                line=ple_nodes_status.readline()
+            while line:
+                if len(line.split(',')) == 3:
+                    self.status_table[line.split(',')[0]]=line.split(',')[1]
+                line=ple_nodes_status.readline()            
+        except:
+            print 'MyOps failed to get nodes from %s '%(self.myops_ple_url+query)
 
-        print self.status_table
+        #print self.status_table
         
         #PLC information
-        plc_nodes_status = urlopen(self.myops_plc_url+query)
-        line=plc_nodes_status.readline()
-        #get rid of header
-        if line.split(',')[0] == 'hostname' and line.split(',')[1] == 'observed_status':
+        try:
+            plc_nodes_status = urlopen(self.myops_plc_url+query)
             line=plc_nodes_status.readline()
-        while line:
-            if len(line.split(',')) == 3:
-                self.status_table[line.split(',')[0]]=line.split(',')[1]
-            line=plc_nodes_status.readline()            
+            #get rid of header
+            if line.split(',')[0] == 'hostname' and line.split(',')[1] == 'observed_status':
+                line=plc_nodes_status.readline()
+            while line:
+                if len(line.split(',')) == 3:
+                    self.status_table[line.split(',')[0]]=line.split(',')[1]
+                line=plc_nodes_status.readline()            
+        except:
+            print 'MyOps failed to get nodes from %s '%(self.myops_plc_url+query)
 
         return self.status_table
 
@@ -111,4 +119,32 @@ class MyOps:
             if self.status_table[hostname]=='BOOT':
                 nodes[hostname]=0
         return nodes
+    
+
+class Monitor:
+    status_table=None
+    myops_ple_url=""
+    myops_plc_url=""
+    
+    def __init__(self,username,password,host,checked_nodes={}):
+        self.api=PlanetLabAPI(username,password,host)
+        self.checked_nodes=checked_nodes
+        
+    def isNodeHealthy(self,hostname):
+        cmd=subprocess.Popen(['nc', '-z', '-w', '5', hostname, '22'],stdout=subprocess.PIPE,close_fds=True)
+        cmd.communicate()[0].strip()
+        if cmd.returncode == 0:
+            return True
+        return False
+            
+        
+    def getHealthyNodes(self):
+        nodes={}
+        nodes_on_boot=self.api.getPLCBootNodes()
+        for hostname in nodes_on_boot:
+            if hostname not in self.checked_nodes:
+                if self.isNodeHealthy(hostname):
+                    nodes[hostname]=0
+        return nodes
+                
     

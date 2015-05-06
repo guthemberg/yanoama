@@ -30,9 +30,11 @@ def get_install_path():
 import sys
 try:
     from yanoama.planetlab.planetlab import MyOps 
+    from yanoama.planetlab.planetlab import Monitor 
 except ImportError:
     sys.path.append(get_install_path()) 
     from yanoama.planetlab.planetlab import MyOps 
+    from yanoama.planetlab.planetlab import Monitor 
 
 
 class Essential:
@@ -339,7 +341,7 @@ def online():
     return True
 
 
-def getIntialNodes(cmd_args):
+def getIntialNodes(username,password,host,cmd_args):
     nodes={}
     filename=''
     if len(cmd_args) > 1:
@@ -351,9 +353,11 @@ def getIntialNodes(cmd_args):
             nodes=readNodes(filename)
         else:
             try:
-                nodes=MyOps().getAvailableNodes()
+                myops_nodes=MyOps().getAvailableNodes()
+                monitor_nodes=Monitor(username,password,host,myops_nodes.keys()).getHealthyNodes()
+                nodes=dict(myops_nodes.items()+monitor_nodes.items())
             except:
-                print 'FATAL EEROR: failed to get myops information: nodes=MyOps().getAvailableNodes(). bye.'
+                print 'FATAL EEROR: failed to get myops or monitor information: nodes=MyOps().getAvailableNodes(). bye.'
                 sys.exit(-1)
     return nodes,filename
 

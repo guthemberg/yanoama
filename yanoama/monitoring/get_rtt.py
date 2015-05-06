@@ -9,6 +9,11 @@ try:
 except ImportError:
     import simplejson as json
 
+from configobj import ConfigObj
+
+
+PLE_CONF_FILE='/etc/ple.conf'
+
 #looking for yanoama module
 def get_install_path():
     try:
@@ -37,6 +42,8 @@ except ImportError:
 
 
 
+    
+       
 
 
 
@@ -47,17 +54,19 @@ if __name__ == '__main__':
         log('offline')
         sys.exit(-1)
     log('run get_rtt... ')
-    nodes,filename=getIntialNodes(sys.argv)   
-    myops_nodes={}
+    config=ConfigObj(PLE_CONF_FILE)
+    nodes,filename=getIntialNodes(config['username'],config['password'],config['host'],sys.argv)   
     try:
         myops_nodes=MyOps().getAvailableNodes()
+        monitor_nodes=Monitor(config['username'],config['password'],config['host'],myops_nodes.keys()).getHealthyNodes()
+        alive_nodes=dict(myops_nodes.items()+monitor_nodes.items())
     except:
         print 'failed to get myops information: myops_nodes=MyOps().getAvailableNodes()'
     bad_nodes=[]
     #checking existing nodes, and excluding bad nodes
-    checkNodes(nodes, myops_nodes, bad_nodes)
+    checkNodes(nodes, alive_nodes, bad_nodes)
     #checking remaining potential new nodes
-    checkNodes(nodes, {}, [], myops_nodes)
+    checkNodes(nodes, {}, [], alive_nodes)
     #clean up bad nodes
     for hostname in bad_nodes:
         del nodes[hostname]

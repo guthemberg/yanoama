@@ -99,6 +99,7 @@ sudo yum --nogpgcheck -y -d0 -e0 --quiet install git-core python-simplejson mong
 #(c) pymongo
 sudo pip install pymongo
 sudo pip install simple_json
+sudo pip install configobj
 
 #for any update, run "git pull"
 #copy the main script and conf file

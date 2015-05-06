@@ -143,9 +143,9 @@ class Monitor:
         nodes={}
         nodes_on_boot=self.api.getBootNodes()
         for hostname in nodes_on_boot:
-            if hostname not in self.checked_nodes:
-                if self.isNodeHealthy(hostname):
-                    nodes[hostname]=0
+            if hostname['hostname'] not in self.checked_nodes:
+                if self.isNodeHealthy(hostname['hostname']):
+                    nodes[hostname['hostname']]=0
         return nodes
                 
     

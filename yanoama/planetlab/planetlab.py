@@ -127,9 +127,7 @@ class Monitor:
     myops_plc_url=""
     
     def __init__(self,username,password,host,checked_nodes={}):
-        print 'inside'
         self.api=PlanetLabAPI(username,password,host)
-        print 'inside done'
         self.checked_nodes=checked_nodes
         
     def isNodeHealthy(self,hostname):
@@ -142,7 +140,9 @@ class Monitor:
         
     def getHealthyNodes(self):
         nodes={}
+        print 'whats up'
         nodes_on_boot=self.api.getPLCBootNodes()
+        print 'whats up here'
         for hostname in nodes_on_boot:
             if hostname not in self.checked_nodes:
                 if self.isNodeHealthy(hostname):

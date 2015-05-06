@@ -55,11 +55,11 @@ if __name__ == '__main__':
         sys.exit(-1)
     log('run get_rtt... ')
     config=ConfigObj(PLE_CONF_FILE)
-    nodes,filename=getIntialNodes(config['username'],config['password'],config['host'],sys.argv) 
+    nodes,filename=getIntialNodes(config['username'],config['password'],config['host'],config['slice'],config['key'],sys.argv) 
     alive_nodes={}  
     try:
         myops_nodes=MyOps().getAvailableNodes()
-        monitor_nodes=Monitor(config['username'],config['password'],config['host'],myops_nodes.keys()).getHealthyNodes()
+        monitor_nodes=Monitor(config['username'],config['password'],config['host'],config['slice'],config['key'],myops_nodes.keys()).getHealthyNodes()
         alive_nodes=dict(myops_nodes.items()+monitor_nodes.items())
     except:
         print 'failed to get myops information: myops_nodes=MyOps().getAvailableNodes()'

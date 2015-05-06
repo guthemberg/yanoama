@@ -45,7 +45,7 @@ if __name__ == '__main__':
         sys.exit(-1)
     log('run get_rtt... ')
     config=ConfigObj(PLE_CONF_FILE)
-    nodes,filename=getIntialNodes(config['username'],config['password'],config['host'],sys.argv)   
+    nodes,filename=getIntialNodes(config['username'],config['password'],config['host'],config['slice'],config['key'],sys.argv)   
     print "nodes:"+str(len(nodes))
     db=Mongo()
     db.save_raw_nodes(nodes)

@@ -126,13 +126,23 @@ class Monitor:
     myops_ple_url=""
     myops_plc_url=""
     
-    def __init__(self,username,password,host,checked_nodes={}):
+    def __init__(self,username,password,host,slice,key,checked_nodes={}):
+        self.slice=slice
+        self.key=key
         self.api=PlanetLabAPI(username,password,host)
         self.checked_nodes=checked_nodes
         
     def isNodeHealthy(self,hostname):
         #print hostname
         cmd=subprocess.Popen(['nc', '-z', '-w', '5', hostname, '22'],stdout=subprocess.PIPE,close_fds=True)
+        cmd.communicate()[0].strip()
+        if cmd.returncode == 0:
+            return True
+        return False
+    
+    def isGoodNode(self,hostname):
+        target='%s@%s'%(self.slice,hostname)
+        cmd=subprocess.Popen(['ssh', '-i', self.key, '-o', 'StrictHostKeyChecking=no', '-o','ConnectTimeout=5' ,target,'pwd'],stdout=subprocess.PIPE,close_fds=True)
         cmd.communicate()[0].strip()
         if cmd.returncode == 0:
             return True
@@ -147,5 +157,16 @@ class Monitor:
                 if self.isNodeHealthy(hostname['hostname']):
                     nodes[hostname['hostname']]=0
         return nodes
+    
+    def cleanUpNodesList(self):
+        slice_nodes=self.api.getSliceHostnames(self.slice)
+        sys.stdout.write(" nodes before %d... "%(len(slice_nodes)))
+        for hostname in self.api.getSliceHostnames(self.slice):
+            if not self.isGoodNode(hostname):
+                slice_nodes.remove(hostname)
+        sys.stdout.write(" nodes after %d... "%(len(slice_nodes)))
+        self.api.updateSliceNodes(self.slice, slice_nodes)
+                
+            
                 
     

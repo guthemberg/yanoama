@@ -343,7 +343,7 @@ def online():
     return True
 
 
-def getIntialNodes(username,password,host,cmd_args):
+def getIntialNodes(username,password,host,slice,key,cmd_args):
     nodes={}
     filename=''
     if len(cmd_args) > 1:

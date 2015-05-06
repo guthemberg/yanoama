@@ -97,6 +97,10 @@ fi
 sudo yum --nogpgcheck -y -d0 -e0 --quiet install git-core python-simplejson mongodb-org mongodb-org-server pytz gcc sysstat python-devel
 	
 #(c) pymongo
+echo -n 'working versions:'
+pip --version
+python --version
+
 sudo pip install pymongo
 sudo pip install simple_json
 sudo pip install configobj

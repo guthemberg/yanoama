@@ -127,7 +127,9 @@ class Monitor:
     myops_plc_url=""
     
     def __init__(self,username,password,host,checked_nodes={}):
+        print 'inside'
         self.api=PlanetLabAPI(username,password,host)
+        print 'inside done'
         self.checked_nodes=checked_nodes
         
     def isNodeHealthy(self,hostname):

@@ -354,7 +354,9 @@ def getIntialNodes(username,password,host,cmd_args):
         else:
             try:
                 myops_nodes=MyOps().getAvailableNodes()
+                print 'getting monitor data'
                 monitor_nodes=Monitor(username,password,host,myops_nodes.keys()).getHealthyNodes()
+                print 'merging nodes'
                 nodes=dict(myops_nodes.items()+monitor_nodes.items())
             except:
                 print 'FATAL EEROR: failed to get myops or monitor information: nodes=MyOps().getAvailableNodes(). bye.'

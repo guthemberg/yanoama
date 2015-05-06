@@ -11,6 +11,8 @@ import subprocess
 from random import sample
 from time import sleep
 import os
+import traceback
+
 try:
     import json
 except ImportError:
@@ -359,6 +361,7 @@ def getIntialNodes(username,password,host,cmd_args):
                 print 'merging nodes'
                 nodes=dict(myops_nodes.items()+monitor_nodes.items())
             except Exception as e: 
+                traceback.print_exc()
                 print(e)
                 print 'FATAL EEROR: failed to get myops or monitor information: nodes=MyOps().getAvailableNodes(). bye.'
                 sys.exit(-1)

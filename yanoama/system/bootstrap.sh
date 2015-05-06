@@ -51,6 +51,7 @@ if [ [ $python_version_flag -eq 1 ]; then
 else
 	mkdir -p ~/python_env/bin/
 	ln -s /usr/bin/python ~/python_env/bin/
+	ln -s /usr/bin/pip ~/python_env/bin/
 fi
 
 #check if pilot is running and try to stop
@@ -101,9 +102,9 @@ echo -n 'working versions:'
 pip --version
 python --version
 
-sudo pip install pymongo
-sudo pip install simple_json
-sudo pip install configobj
+sudo ~/python_env/bin/pip install pymongo
+sudo ~/python_env/bin/pip install simple_json
+sudo ~/python_env/bin/pip install configobj
 
 #for any update, run "git pull"
 #copy the main script and conf file

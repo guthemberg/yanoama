@@ -55,10 +55,10 @@ else
 fi
 
 #check if pilot is running and try to stop
-if [ `pgrep -f pilotd|wc -l` -ge 1 ] && [ $python_version_flag -eq 0 ]; then
-  chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
-  sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd stop
-fi
+#if [ `pgrep -f pilotd|wc -l` -ge 1 ] && [ $python_version_flag -eq 0 ]; then
+#  chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
+#  sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd stop
+#fi
 #requirement, start cron
 sudo /sbin/service crond start
 sudo /sbin/chkconfig crond on
@@ -162,25 +162,28 @@ fi
 echo " done."    
 
 #run pilot daemon for all nodes (peers and coordinators)
-chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
-log_dir=/usr/local/yanoama
-if [ ! -d "$log_dir" ]; then
-  sudo mkdir $log_dir
-  sudo touch ${log_dir}/pilot.log
-  sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
-elif [ $python_version_flag -eq 0 ]; then
-  #if there is python right version
-  echo "running the server."
-  sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
-elif [ $python_version_flag -eq 1 ]; then
-  #wait 2 minutes before restart (for cleaning up connection stalled connections)
-  echo -n "sleeping (2min)... "
-  if [ `pgrep -f pilotd|wc -l` -ge 1 ]; then
-    sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd stop
-  fi
-  sleep 120
-  echo "get up."
-  sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
-fi
+#chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
+#log_dir=/usr/local/yanoama
+#if [ ! -d "$log_dir" ]; then
+#  sudo mkdir $log_dir
+#  sudo touch ${log_dir}/pilot.log
+#  sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
+#elif [ $python_version_flag -eq 0 ]; then
+#  #if there is python right version
+#  echo "running the server."
+#  sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
+#elif [ $python_version_flag -eq 1 ]; then
+#  #wait 2 minutes before restart (for cleaning up connection stalled connections)
+#  echo -n "sleeping (2min)... "
+#  if [ `pgrep -f pilotd|wc -l` -ge 1 ]; then
+#    sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd stop
+#  fi
+#  sleep 120
+#  if [ `pgrep -f pilotd|wc -l` -ge 1 ]; then
+#    sudo pkill -f pilotd
+#  fi
+#  echo "get up."
+#  sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
+#fi
 echo "done."
 

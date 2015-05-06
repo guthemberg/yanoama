@@ -11,6 +11,7 @@
 import sys
 import logging
 import SocketServer
+import socket
 
 sys.path.append('/home/upmc_aren/yanoama')
 
@@ -49,7 +50,8 @@ class PilotDaemon(Daemon):
 	
 	def run(self):	
 		#HOST and PORT comes from defaults.py
-		bind_params=(settings.HOST, settings.PORT)
+		addr = socket.gethostbyname(settings.HOST)
+		bind_params=(addr, settings.PORT)
 		try:
 			self.server = SocketServer.ThreadingTCPServer(bind_params, ThreadedTCPRequestHandler, False)
 			self.server.allow_reuse_address=True

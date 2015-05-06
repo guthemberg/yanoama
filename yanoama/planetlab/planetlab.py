@@ -140,9 +140,7 @@ class Monitor:
         
     def getHealthyNodes(self):
         nodes={}
-        print 'whats up'
-        nodes_on_boot=self.api.getPLCBootNodes()
-        print 'whats up here'
+        nodes_on_boot=self.api.getBootNodes()
         for hostname in nodes_on_boot:
             if hostname not in self.checked_nodes:
                 if self.isNodeHealthy(hostname):

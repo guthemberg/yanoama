@@ -34,7 +34,7 @@ class PlanetLabAPI:
         return (self.api.GetNodes(self.auth,{'peer_id':1},['hostname']))
 
     def getPLCBootNodes(self):
-        return (self.api.GetNodes(self.auth,{'peer_id':1,'boot_state':'BOOT'},['node_id','hostname']))
+        return (self.api.GetNodes(self.auth,{'peer_id':1,'boot_state':'boot'},['node_id','hostname']))
 
     def getSliceHostnames(self,slice_name):
         node_ids = (self.api.GetSlices(self.auth,slice_name,['node_ids']))[0]['node_ids']
@@ -86,6 +86,8 @@ class MyOps:
                 self.status_table[line.split(',')[0]]=line.split(',')[1]
             line=ple_nodes_status.readline()            
 
+        print self.status_table
+        
         #PLC information
         plc_nodes_status = urlopen(self.myops_plc_url+query)
         line=plc_nodes_status.readline()

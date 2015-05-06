@@ -19,7 +19,7 @@ echo "python version check result: $python_version_flag"
 # if version is lower, upgrade it
 #requirements
 sudo yum --nogpgcheck -y -d0 -e0 --quiet groupinstall "Development tools"
-sudo yum --nogpgcheck -y -d0 -e0 --quiet install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel
+sudo yum --nogpgcheck -y -d0 -e0 --quiet install zlib-devel nc bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel
 
 #1 means python older than 2.7, so upgrade is required
 if [ [ $python_version_flag -eq 1 ]; then

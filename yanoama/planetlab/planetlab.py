@@ -131,7 +131,7 @@ class Monitor:
         self.checked_nodes=checked_nodes
         
     def isNodeHealthy(self,hostname):
-        print hostname
+        #print hostname
         cmd=subprocess.Popen(['nc', '-z', '-w', '5', hostname, '22'],stdout=subprocess.PIPE,close_fds=True)
         cmd.communicate()[0].strip()
         if cmd.returncode == 0:

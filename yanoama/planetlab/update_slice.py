@@ -1,5 +1,4 @@
-#!/home/upmc_aren/python_env/bin/python
-
+#!/usr/bin/env python
 
 import traceback,time,pickle,os,subprocess,sys
 sys.path.append('/Users/gdasilva/Documents/workplace/yanoama/yanoama/planetlab/')
@@ -125,6 +124,7 @@ def update_nodes():
     if len(_coordinators.keys())==0:
         sys.stdout.write(" no coordinators ")
     for hostname in _coordinators.keys():
+        sys.stdout.write("...fetching from %s "%hostname)
         fresh_nodes_list = download_nodes_list(hostname)
         if len(fresh_nodes_list)>0:
             sys.stdout.write("before there were %d nodes, "%(len(get_current_nodes(api, SLICE_NAME))))

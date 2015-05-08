@@ -1,5 +1,6 @@
 #!/home/upmc_aren/python_env/bin/python
 
+import sys
 import xmlrpclib
 #working with http data. further information in http://docs.python.org/3.1/howto/urllib2.html
 from urllib2 import urlopen
@@ -142,7 +143,7 @@ class Monitor:
     
     def isGoodNode(self,hostname):
         target='%s@%s'%(self.slice,hostname)
-        cmd=subprocess.Popen(['ssh', '-i', self.key, '-o', 'StrictHostKeyChecking=no', '-o','ConnectTimeout=5' ,target,'pwd'],stdout=subprocess.PIPE,close_fds=True)
+        cmd=subprocess.Popen(['ssh', '-i', self.key, '-o', 'StrictHostKeyChecking=no', '-o', 'PasswordAuthentication=no', '-o','ConnectTimeout=5' ,target,'pwd'],stdout=subprocess.PIPE,close_fds=True)
         cmd.communicate()[0].strip()
         if cmd.returncode == 0:
             return True

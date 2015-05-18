@@ -188,6 +188,16 @@ if [ -e "$ROLE_FILE" ]; then
 fi
 echo " done."    
 
+###installing paping to copute rtt
+CUR_DIR=`pwd`
+cd /tmp
+cp ${YANOAMA_HOME}/contrib/paping/linux_x86/paping_1.5.5_x86_linux.tar.gz ./
+tar xzf paping_1.5.5_x86_linux.tar.gz
+chmod guo+x paping
+sudo mv paping /bin/
+cd $CUR_DIR
+
+
 #run pilot daemon for all nodes (peers and coordinators)
 #chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
 #log_dir=/usr/local/yanoama

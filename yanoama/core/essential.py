@@ -336,6 +336,16 @@ def getRTT(hostname):
     except:
         return -1
 
+def getRTT_SSH(hostname):
+    try:
+        rtt=float(Popen("sh "+get_install_path()+"/yanoama/monitoring/get_rtt_ssh.sh "+hostname, stdout=PIPE,shell=True).communicate()[0])
+        if rtt>0.0:
+            return rtt
+        else:
+            return -1
+    except:
+        return -1
+    
 def online():
     rtt=getRTT('www.google.com')
     if rtt==-1 :
@@ -373,6 +383,10 @@ def checkNodes(nodes,myops_nodes,bad_nodes,new_nodes=None):
             rtt=getRTT(hostname)
             if rtt>0.0 :
                 nodes[hostname]=rtt
+            else:
+                rtt=getRTT_SSH(hostname)
+                if rtt>0.0 :
+                    nodes[hostname]=rtt
         return
             
     for hostname in nodes:
@@ -387,7 +401,14 @@ def checkNodes(nodes,myops_nodes,bad_nodes,new_nodes=None):
             elif rtt<c_rtt:
                 nodes[hostname]=rtt
         else:
-            bad_nodes.append(hostname)
+            rtt=getRTT_SSH(hostname)
+            if rtt>0.0 :
+                if c_rtt==0.0 :
+                    nodes[hostname]=rtt
+                elif rtt<c_rtt:
+                    nodes[hostname]=rtt
+            else:
+                bad_nodes.append(hostname)
         #if it is in myops nodes, remove it
         try:
             del myops_nodes[hostname]

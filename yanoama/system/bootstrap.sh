@@ -42,7 +42,7 @@ sudo yum --nogpgcheck -y -d0 -e0 --quiet install zlib-devel nc bzip2-devel opens
 
 CUR_DIR=`pwd`
 #1 means python older than 2.7, so upgrade is required
-if [ [ $python_version_flag -eq 1 ]; then
+if [ $python_version_flag -eq 1 ]; then
 	CUR_DIR=`pwd`
 	cd /tmp
 	if [ ! -e "/etc/ld.so.conf.origin" ]; then
@@ -70,7 +70,8 @@ if [ [ $python_version_flag -eq 1 ]; then
 	source ~/python_env/bin/activate
 else
 	cd /tmp
-	sudo su -c 'python ez_setup.py'
+	wget https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py
+		sudo su -c 'python ez_setup.py'
 	sudo easy_install pip
 	exit
 	mkdir -p ~/python_env/bin/

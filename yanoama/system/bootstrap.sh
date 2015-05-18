@@ -74,7 +74,7 @@ else
 	mkdir -p ~/python_env/bin/
 	ln -s /usr/bin/python ~/python_env/bin/
 	ln -s /usr/bin/pip-python ~/python_env/bin/pip
-	sudo -s /usr/bin/pip-python /usr/bin/pip
+	sudo ln -s /usr/bin/pip-python /usr/bin/pip
 fi
 
 cd $CUR_DIR

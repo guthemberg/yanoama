@@ -70,13 +70,11 @@ if [ $python_version_flag -eq 1 ]; then
 	source ~/python_env/bin/activate
 else
 	cd /tmp
-	wget https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py
-		sudo su -c 'python ez_setup.py'
-	sudo easy_install pip
-	exit
+	sudo yum --nogpgcheck -y -d0 -e0 --quiet install python-pip
 	mkdir -p ~/python_env/bin/
 	ln -s /usr/bin/python ~/python_env/bin/
-	ln -s /usr/bin/pip ~/python_env/bin/
+	ln -s /usr/bin/pip-python ~/python_env/bin/pip
+	sudo -s /usr/bin/pip-python /usr/bin/pip
 fi
 
 cd $CUR_DIR

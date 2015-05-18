@@ -54,6 +54,8 @@ if [ $python_version_flag -eq 1 ]; then
 	tar xf Python-2.7.8.tgz
 	cd Python-2.7.8
 	./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared LDFLAGS="-Wl,-rpath /usr/local/lib"
+	make
+	sudo make altinstall
 	cd /tmp
 	wget https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py
 	sudo su -c '/usr/local/bin/python2.7 ez_setup.py'

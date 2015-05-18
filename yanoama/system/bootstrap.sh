@@ -1,8 +1,19 @@
 ####bootstrap script
 
+### functions
+
+##check if yum is working
+#return 0 if all is right
+is_yum_working()
+{
+        yum search vim > /dev/null 2>&1
+        echo $?
+}
+
 ##overview
 #1st: pre-install checkings
 #2nd step: download and install yanoama
+
 
 ###1st step: pre-install checkings
 ##clean up, check/stop pilot,cron start,install git
@@ -16,11 +27,20 @@ python_version_flag=`python -c 'import sys; print("%i" % (sys.hexversion<=0x0207
 
 echo "python version check result: $python_version_flag"
 
+##checking yum
+if [ `is_yum_working` -eq 0 ]; then
+        echo 'yum is fine.'
+else
+        sudo sed -i 's/https/http/g' /etc/yum.repos.d/*
+        sudo yum update
+fi
+
 # if version is lower, upgrade it
 #requirements
 sudo yum --nogpgcheck -y -d0 -e0 --quiet groupinstall "Development tools"
 sudo yum --nogpgcheck -y -d0 -e0 --quiet install zlib-devel nc bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel
 
+CUR_DIR=`pwd`
 #1 means python older than 2.7, so upgrade is required
 if [ [ $python_version_flag -eq 1 ]; then
 	CUR_DIR=`pwd`
@@ -49,10 +69,16 @@ if [ [ $python_version_flag -eq 1 ]; then
 	virtualenv --python=python2.7 ~/python_env
 	source ~/python_env/bin/activate
 else
+	cd /tmp
+	sudo su -c 'python ez_setup.py'
+	sudo easy_install pip
+	exit
 	mkdir -p ~/python_env/bin/
 	ln -s /usr/bin/python ~/python_env/bin/
 	ln -s /usr/bin/pip ~/python_env/bin/
 fi
+
+cd $CUR_DIR
 
 #check if pilot is running and try to stop
 #if [ `pgrep -f pilotd|wc -l` -ge 1 ] && [ $python_version_flag -eq 0 ]; then

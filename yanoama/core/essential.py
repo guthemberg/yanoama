@@ -67,7 +67,7 @@ class Essential:
         self.deployment_path=_ple_deployment['path']
         self.storage_path = _ple_deployment['storage_path']
         _pilot = config.get('pilot', {})
-        self.pilot_port=_pilot.get('port',44444)
+        self.pilot_port=_pilot.get('port',7945)
 
     def get_group_size(self,coordinator):
         return self.coordinators.get(coordinator).get('group_size')

@@ -1,17 +1,24 @@
 import sys
 import socket
+import logging
 
 sys.path.append('/home/upmc_aren/yanoama')
 
 try:
     from yanoama.pilot.core import settings
-    from yanoama.pilot.system.pilot_server import ThreadedTCPServer,PilotServer
-    from yanoama.pilot.system.basic_daemon import Daemon
+    from yanoama.pilot.system.server import ThreadedTCPServer,PilotServer
+    from yanoama.pilot.system.daemon import Daemon
 except:
     print 'Pilot is not installed, bye.'
     sys.exit()
 
 PIDFILE = '/var/run/pilotd.pid'
+# Keep all log files in one place
+LOGFILE = '/usr/local/yanoama/pilot.log'
+
+# Configure logging
+logging.basicConfig(filename=LOGFILE,level=logging.DEBUG)
+log = logging.getLogger('pilotd')
 
 # from pilot_server import ThreadedTCPServer,PilotServer
 # from basic_daemon import Deamon
@@ -34,6 +41,7 @@ if __name__ == "__main__":
                 daemon.start()
             except Exception, e:
                 log.exception("Pilotd cant be started")
+            print ' done.'
         elif 'stop' == sys.argv[1]:
             print "Stopping Pilotd ..."
             daemon.stop()

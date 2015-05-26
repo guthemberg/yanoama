@@ -1,8 +1,8 @@
 #!/home/upmc_aren/python_env/bin/python
 
 #-------------------------------------------------------------------------------
-# Name:        client.py
-# Purpose:     Pilot client for remote commands on planetlab nodes
+# Name:        server.py
+# Purpose:     Pilot server for remote commands on planetlab nodes
 #
 # Author:      Guthemberg Silvestre
 #
@@ -36,72 +36,35 @@
 # either expressed or implied, of the FreeBSD Project.
 #===============================================================================
 
-import sys
-import socket
-from time import gmtime, strftime
-try:
-    import json
-except ImportError:
-    import simplejson as json
+import SocketServer
 
 
-class ClientSocket():
-    
-    
-    rbufsize = -1
-    wbufsize = 0
+from _linux import LinuxSystemConsole
+console = LinuxSystemConsole()
 
 
-    def __init__(self, address):
-        if type(address) == type(()) and (type(address[0]) == type(u"") or type(address[0]) == type('')) and type(address[1]) == type(1):
-            pass
-        else:
-            print ('Address is of incorrect type. \n' +
-                  'Must be (serverHost (str), serverPort (int)).')
-            sys.exit(1)
+connections={}
 
-        self.address = address
+
+class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
+
+    bsize=1024
+
+    def setup(self):
+        SocketServer.StreamRequestHandler.setup(self)
+
+    def handle(self):
+        data = self.request.recv(self.bsize)
+        output = console.run(data.strip())
+        self.request.send(output[:min(len(output),self.bsize)]) 
+        return
         
-        
-    def run(self,cmd="date"):
-        # Create a socket (SOCK_STREAM means a TCP socket)
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        
-        try:
-            # Connect to server and send data
-            sock.connect(self.address)
-            sock.sendall(cmd + "\n")
-        
-            # Receive data from the server and shut down
-            received = sock.recv(1024)
-        finally:
-            sock.close()
-        print "%s. %s,%s" % (strftime("%Y-%m-%d %H:%M:%S", gmtime()),\
-               "    Sent:     "+(cmd),"    received: " +(received.strip()))
-
-def get_pilot_port():
-    try:
-        config_file = file('/etc/yanoama.conf').read()
-        config = json.loads(config_file)
-    except Exception, e:
-        print "There was an error in your configuration file (/etc/yanoama.conf)"
-        raise e
-    _pilot = config.get('pilot', {'port':7945})
-    return (_pilot['port']) 
+    def finish(self):
+        self.request.send('bye ' + str(self.client_address) + '\n')
 
 
-def main():
-    if len(sys.argv) != 3:
-        print "run as: client.py host cmd"
-        sys.exit(1)
-    host=sys.argv[1]
-    cmd=sys.argv[2]
-    
-    address = (host, get_pilot_port())
-
-    console = ClientSocket(address)
-    console.run(cmd)
-
-
-if __name__ == '__main__':
-    main()
+#if __name__ == '__main__':
+#    server = SocketServer.ThreadingTCPServer((host, port), ThreadedTCPRequestHandler)
+#
+#    print 'waiting for commands on %s:%s...' % (host, port)
+#    server.serve_forever()

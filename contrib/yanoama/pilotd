@@ -1,28 +1,16 @@
-#!/home/upmc_aren/python_env/bin/python
-
-### BEGIN INIT INFO
-# Provides:          pilotd
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: Start the Pilot system info collector
-# Description:       Pilot daemon that collects system and process information.
-### END INIT INFO
-
 import sys
-import logging
-import SocketServer
 import socket
+import logging
 
 sys.path.append('/home/upmc_aren/yanoama')
 
 try:
-	from yanoama.pilot.system.daemon import Daemon
-	from yanoama.pilot.core import settings
-	from yanoama.pilot.system.server import ThreadedTCPRequestHandler
+    from yanoama.pilot.core import settings
+    from yanoama.pilot.system.server import ThreadedTCPServer,PilotServer
+    from yanoama.pilot.system.daemon import Daemon
 except:
-	print 'Pilot is not installed, bye.'
-	sys.exit()
-
+    print 'Pilot is not installed, bye.'
+    sys.exit()
 
 PIDFILE = '/var/run/pilotd.pid'
 # Keep all log files in one place
@@ -32,72 +20,53 @@ LOGFILE = '/usr/local/yanoama/pilot.log'
 logging.basicConfig(filename=LOGFILE,level=logging.DEBUG)
 log = logging.getLogger('pilotd')
 
-class PilotDaemon(Daemon):
-	server=None
-	# Add an empty dictionary on start/end to avoid chart bugs
-	def empty(self):
-		self.server = None
+# from pilot_server import ThreadedTCPServer,PilotServer
+# from basic_daemon import Deamon
 
-	# Executed on stop and restart
-	def __del__(self):
-		if self.server:
-			self.server.shutdown()
-		self.empty()
-		
-	def __init__(self, pidfile):
-		super(PilotDaemon, self).__init__(pidfile)
-		self.empty()
-	
-	def run(self):	
-		#HOST and PORT comes from defaults.py
-		addr = socket.gethostbyname(settings.HOST)
-		bind_params=(addr, settings.PORT)
-		try:
-			self.server = SocketServer.ThreadingTCPServer(bind_params, ThreadedTCPRequestHandler, False)
-			self.server.allow_reuse_address=True
-			self.server.server_bind()
-			self.server.server_activate()
-		except:
-			#legacy code for older python version (smaller than 2.6)
-			self.server = SocketServer.ThreadingTCPServer(bind_params, ThreadedTCPRequestHandler)
-		self.server.serve_forever()
-
+class Pilotd(Daemon):
+    def run(self):
+        addr = socket.gethostbyname(settings.HOST)
+        bind_params=(addr, settings.PORT)
+        t = ThreadedTCPServer(bind_params, PilotServer)
+        t.serve_forever()
+        
+        
 if __name__ == "__main__":
 
-	daemon = PilotDaemon(PIDFILE)
-	
-	if len(sys.argv) == 2:
-		if 'start' == sys.argv[1]:
-			try:
-				daemon.start()
-			except Exception, e:
-				log.exception("Pilotd cant be started")
-		elif 'stop' == sys.argv[1]:
-			print "Stopping Pilotd ..."
-			daemon.stop()
-		elif 'restart' == sys.argv[1]:
-			print "Restaring Pilotd ..."
-			daemon.restart()
-		elif 'status' == sys.argv[1]:
-			try:
-				pf = file(PIDFILE,'r')
-				pid = int(pf.read().strip())
-				pf.close()
-			except IOError:
-				pid = None
-			except SystemExit:
-				pid = None
+    daemon = Pilotd(PIDFILE)
+    
+    if len(sys.argv) == 2:
+        if 'start' == sys.argv[1]:
+            try:
+                daemon.start()
+            except Exception, e:
+                log.exception("Pilotd cant be started")
+            print ' done.'
+        elif 'stop' == sys.argv[1]:
+            print "Stopping Pilotd ..."
+            daemon.stop()
+        elif 'restart' == sys.argv[1]:
+            print "Restaring Pilotd ..."
+            daemon.restart()
+        elif 'status' == sys.argv[1]:
+            try:
+                pf = file(PIDFILE,'r')
+                pid = int(pf.read().strip())
+                pf.close()
+            except IOError:
+                pid = None
+            except SystemExit:
+                pid = None
 
-			if pid:
-				print 'Pilotd is running as pid %s' % pid
-			else:
-				print 'Pilotd is not running.'
-		
-		else:
-			print "Unknown command"
-			sys.exit(2)
-			sys.exit(0)
-	else:
-		print "usage: %s start|stop|restart|status" % sys.argv[0]
-		sys.exit(2)
-
+            if pid:
+                print 'Pilotd is running as pid %s' % pid
+            else:
+                print 'Pilotd is not running.'
+        
+        else:
+            print "Unknown command"
+            sys.exit(2)
+            sys.exit(0)
+    else:
+        print "usage: %s start|stop|restart|status" % sys.argv[0]
+        sys.exit(2)

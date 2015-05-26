@@ -1,0 +1,61 @@
+sys.path.append('/home/upmc_aren/yanoama')
+
+try:
+    from yanoama.pilot.core import settings
+    from yanoama.pilot.system.pilot_server import ThreadedTCPServer,PilotServer
+    from yanoama.pilot.system.basic_daemon import Deamon
+except:
+    print 'Pilot is not installed, bye.'
+    sys.exit()
+
+PIDFILE = '/var/run/pilotd.pid'
+
+# from pilot_server import ThreadedTCPServer,PilotServer
+# from basic_daemon import Deamon
+
+class Pilotd(Deamon):
+    def run(self):
+        addr = socket.gethostbyname(settings.HOST)
+        bind_params=(addr, settings.PORT)
+        t = ThreadedTCPServer(bind_params, PilotServer)
+        t.serve_forever()
+        
+        
+if __name__ == "__main__":
+
+    daemon = Pilotd(PIDFILE)
+    
+    if len(sys.argv) == 2:
+        if 'start' == sys.argv[1]:
+            try:
+                daemon.start()
+            except Exception, e:
+                log.exception("Pilotd cant be started")
+        elif 'stop' == sys.argv[1]:
+            print "Stopping Pilotd ..."
+            daemon.stop()
+        elif 'restart' == sys.argv[1]:
+            print "Restaring Pilotd ..."
+            daemon.restart()
+        elif 'status' == sys.argv[1]:
+            try:
+                pf = file(PIDFILE,'r')
+                pid = int(pf.read().strip())
+                pf.close()
+            except IOError:
+                pid = None
+            except SystemExit:
+                pid = None
+
+            if pid:
+                print 'Pilotd is running as pid %s' % pid
+            else:
+                print 'Pilotd is not running.'
+        
+        else:
+            print "Unknown command"
+            sys.exit(2)
+            sys.exit(0)
+    else:
+        print "usage: %s start|stop|restart|status" % sys.argv[0]
+        sys.exit(2)

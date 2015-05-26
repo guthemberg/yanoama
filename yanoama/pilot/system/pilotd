@@ -5,7 +5,7 @@ sys.path.append('/home/upmc_aren/yanoama')
 try:
     from yanoama.pilot.core import settings
     from yanoama.pilot.system.pilot_server import ThreadedTCPServer,PilotServer
-    from yanoama.pilot.system.basic_daemon import Deamon
+    from yanoama.pilot.system.basic_daemon import Daemon
 except:
     print 'Pilot is not installed, bye.'
     sys.exit()
@@ -15,7 +15,7 @@ PIDFILE = '/var/run/pilotd.pid'
 # from pilot_server import ThreadedTCPServer,PilotServer
 # from basic_daemon import Deamon
 
-class Pilotd(Deamon):
+class Pilotd(Daemon):
     def run(self):
         addr = socket.gethostbyname(settings.HOST)
         bind_params=(addr, settings.PORT)

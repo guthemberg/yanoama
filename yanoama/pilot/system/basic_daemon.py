@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 '''
 ***
 Modified generic daemon class

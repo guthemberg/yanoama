@@ -1,4 +1,5 @@
 import sys
+import socket
 
 sys.path.append('/home/upmc_aren/yanoama')
 

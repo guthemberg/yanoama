@@ -137,5 +137,5 @@ class service(SocketServer.BaseRequestHandler):
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     pass
 
-t = ThreadedTCPServer(('',1520), PilotServer)
-t.serve_forever()
+# t = ThreadedTCPServer(('',1520), PilotServer)
+# t.serve_forever()

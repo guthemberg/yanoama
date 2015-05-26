@@ -103,6 +103,7 @@ sudo yum --nogpgcheck -y -d0 -e0 --quiet install git-core
 if [ -d $YANOAMA_HOME ]; then
   cd $YANOAMA_HOME
   git pull
+  git checkout
   cd $HOME
 else
   #remove old installation

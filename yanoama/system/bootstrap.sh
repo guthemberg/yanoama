@@ -199,12 +199,14 @@ cd $CUR_DIR
 
 
 #run pilot daemon for all nodes (peers and coordinators)
-#chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
-#log_dir=/usr/local/yanoama
-#if [ ! -d "$log_dir" ]; then
-#  sudo mkdir $log_dir
-#  sudo touch ${log_dir}/pilot.log
-#  sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd start
+chmod +x ${YANOAMA_HOME}/contrib/yanoama/pilotd
+log_dir=/usr/local/yanoama
+if [ ! -d "$log_dir" ]; then
+  sudo mkdir $log_dir
+  sudo touch ${log_dir}/pilot.log
+
+sudo ${YANOAMA_HOME}/contrib/yanoama/pilotd restart
+
 #elif [ $python_version_flag -eq 0 ]; then
 #  #if there is python right version
 #  echo "running the server."

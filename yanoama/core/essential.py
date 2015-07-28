@@ -338,7 +338,7 @@ def getRTT(hostname):
 
 def getRTT_SSH(hostname):
     try:
-        rtt=float(Popen("sh "+get_install_path()+"/yanoama/monitoring/get_rtt_ssh.sh "+hostname, stdout=PIPE,shell=True).communicate()[0])
+        rtt=float(Popen("sh "+get_install_path()+"/yanoama/monitoring/get_rtt_ssh.sh "+hostname, stdout=PIPE,shell=True).communicate()[0].strip())
         if rtt>0.0:
             return rtt
         else:

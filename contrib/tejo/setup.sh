@@ -75,12 +75,6 @@ install_basic_packages_fedora()
 		sudo yum update
 	fi
 	
-	cd /tmp
-	rm -rf jre-7u75-linux-i586.rpm* jdk-7u75-linux-i586.rpm*
-	wget http://homepages.laas.fr/gdasilva/jre-7u75-linux-i586.rpm
-	wget http://homepages.laas.fr/gdasilva/jdk-7u75-linux-i586.rpm
-	sudo rpm -Uvh /tmp/jre-7u75-linux-i586.rpm
-	sudo rpm -Uvh /tmp/jdk-7u75-linux-i586.rpm
 			
 	sudo yum --nogpgcheck -y -d0 -e0 --quiet install ant ant-nodeps ant-junit \
 		ant-scripts ant-javadoc ant-trax gcc gcc-c++ valgrind ntp  git-core \
@@ -88,16 +82,21 @@ install_basic_packages_fedora()
 		make automake pymongo bc screen apr apr-devel e2fsprogs-devel \
 		expat expat-devel pcre-devel zlib-devel
 	#select the right java version 1.7
-	sudo alternatives --install /usr/bin/java java /usr/java/jre1.7.0_75/bin/java 200000
-	sudo alternatives --install /usr/bin/javaws javaws /usr/java/jre1.7.0_75/bin/javaws 200000
-	sudo alternatives --install /usr/bin/javac javac /usr/java/jdk1.7.0_75/bin/javac 200000
 	cd
 }
 	
-#install_java_fedora()
-#{
-#			
-#}
+install_java_fedora()
+{
+	#	cd /tmp
+	#	rm -rf jre-7u75-linux-i586.rpm* jdk-7u75-linux-i586.rpm*
+	#	wget http://homepages.laas.fr/gdasilva/jre-7u75-linux-i586.rpm
+	#	wget http://homepages.laas.fr/gdasilva/jdk-7u75-linux-i586.rpm
+	sudo rpm -Uvh /home/upmc_aren/tejo/contrib/java/jre-7u75-linux-i586.rpm
+	sudo rpm -Uvh /home/upmc_aren/tejo/contrib/java/jdk-7u75-linux-i586.rpm
+	sudo alternatives --install /usr/bin/java java /usr/java/jre1.7.0_75/bin/java 200000
+	sudo alternatives --install /usr/bin/javaws javaws /usr/java/jre1.7.0_75/bin/javaws 200000
+	sudo alternatives --install /usr/bin/javac javac /usr/java/jdk1.7.0_75/bin/javac 200000
+}
 
 perform_common_settings()
 {

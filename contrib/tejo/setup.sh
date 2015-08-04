@@ -77,8 +77,8 @@ install_basic_packages_fedora()
 	
 	cd /tmp
 	rm -rf jre-7u75-linux-i586.rpm* jdk-7u75-linux-i586.rpm*
-	wget http://homepages.laas.fr/gdasilva/jre-7u75-linux-i586.rpm
-	wget http://homepages.laas.fr/gdasilva/jdk-7u75-linux-i586.rpm
+	wget --no-check-certificate http://eu-monitor-001.cloudapp.net/jre-7u75-linux-i586.rpm -O /tmp/jre-7u75-linux-i586.rpm
+	wget --no-check-certificate http://eu-monitor-001.cloudapp.net/jdk-7u75-linux-i586.rpm -O /tmp/jdk-7u75-linux-i586.rpm
 	sudo rpm -Uvh /tmp/jre-7u75-linux-i586.rpm
 	sudo rpm -Uvh /tmp/jdk-7u75-linux-i586.rpm
 			
@@ -297,6 +297,31 @@ install_workload_cron()
 	install_cron_job "pkill -f ycsb-0.1.4" "${home_dir}/contrib/fedora/mongodb/cron.job.2"
 }
 
+install_paping ()
+{
+
+	CUR_DIR=`pwd`
+	cd /tmp
+
+	home_dir="`get_home_dir`"
+		
+	dist_vesion="linux_x86"
+	dist_file="paping_1.5.5_x86_linux.tar.gz"
+	if [ "`uname -m`" = "x86_64" ]; then
+		dist_vesion="linux_x86-64"
+		dist_file="paping_1.5.5_x86-64_linux.tar.gz"
+	fi
+
+	cp ${home_dir}/contrib/paping/${dist_vesion}/${dist_file} ./
+	tar xzf ${dist_file}
+	chmod guo+x paping
+	sudo mv paping /bin/
+		
+			
+	cd $CUR_DIR
+
+}
+
 handle_script_inputs ()
 {
 #	##nice dynamic loop
@@ -467,6 +492,7 @@ echo "node_location:$node_location"
 
 echo -n "(0) installing basic packages..."
 install_basic_packages_fedora
+install_paping
 #get_tejo
 #install_java_fedora
 echo " (0) done."

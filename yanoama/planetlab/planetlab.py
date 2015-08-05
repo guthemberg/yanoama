@@ -164,6 +164,7 @@ class Monitor:
         sys.stdout.write(" nodes before %d... "%(len(slice_nodes)))
         for hostname in self.api.getSliceHostnames(self.slice):
             if not self.isGoodNode(hostname):
+                print 'BAD NODE:%s'%hostname
                 slice_nodes.remove(hostname)
         sys.stdout.write(" nodes after %d... "%(len(slice_nodes)))
         self.api.updateSliceNodes(self.slice, slice_nodes)

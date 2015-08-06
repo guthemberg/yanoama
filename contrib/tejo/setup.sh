@@ -36,6 +36,19 @@ get_tejo()
 	fi
 }
 
+get_yanoama()
+{
+	root_dir=`get_root_dir`
+	home_dir=${root_dir}/yanoama	
+	if [ -d "$home_dir" ]; then
+		cd $home_dir
+		git pull
+	else
+		cd "$root_dir"
+		git clone git://github.com/guthemberg/yanoama
+	fi
+}
+
 get_parameter()
 {
 	parameter=""
@@ -295,6 +308,13 @@ install_workload_cron()
 	home_dir="`get_home_dir`"
 	install_cron_job "/tmp/experiment_outputs/" "${home_dir}/contrib/fedora/mongodb/cron.job"
 	install_cron_job "pkill -f ycsb-0.1.4" "${home_dir}/contrib/fedora/mongodb/cron.job.2"
+	
+	#	min=`shuf -i 0-59 -n 1`
+	#	hour=`shuf -i 0-23 -n 1`
+	#	sed "s|HOMEDIR|$location|g" ${home_dir}/tejo/common/experiments_scripts/peers/cron.job|sed "s|HOUR|$hour|g"|sed "s|MIN|$min|g" > /tmp/cron.job
+	min=`shuf -i 0-59 -n 1`
+	sed "s|HOMEDIR|$home_dir|g" ${home_dir}/tejo/common/monitoring/cron.job|sed "s|MIN|$min|g" > /tmp/cron.job
+	install_cron_job "wlrtt.py" "/tmp/cron.job"
 }
 
 install_paping ()
@@ -492,6 +512,7 @@ echo "node_location:$node_location"
 
 echo -n "(0) installing basic packages..."
 install_basic_packages_fedora
+get_yanoama
 install_paping
 #get_tejo
 #install_java_fedora
@@ -526,6 +547,7 @@ case "$node_type" in
                 ;;
         "workload")
 				echo -n "(2) installing ganglia for workload..."
+				sudo sed -i "s|WL_TARGET|$aggregator|g" /etc/tejo.conf 
                 install_ganglia_monitor "$node_location" "$node_type" "$aggregator"
                 install_workload_cron
                 

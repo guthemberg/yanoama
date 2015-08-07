@@ -134,7 +134,7 @@ perform_common_settings()
 		root_dir=`get_root_dir`
 		home_dir="$root_dir/${module}"
 		moimeme=`whoami`
-		sed "s|LOCATION|$host_location|g" ${home_dir}/contrib/tejo/tejo.conf.sample|sed "s|USER|${moimeme}|g"|sed "s|MY_DOMAIN|$domain|g"|sed "s|TYPE|$node_type|g"|sed "s|QROUTER|$qrouter|g" > /tmp/tejo.conf
+		sed "s|LOCATION|$host_location|g" ${home_dir}/contrib/tejo/tejo.conf.sample|sed "s|USER|${moimeme}|g"|sed "s|MY_DOMAIN|$domain|g"|sed "s|TYPE|$node_type|g"|sed "s|QROUTER|$qrouter|g"|sed "s|WL_TARGET|$qrouter|g" > /tmp/tejo.conf
 		sudo mv /tmp/tejo.conf /etc/
 			
 		
@@ -315,6 +315,9 @@ install_workload_cron()
 	min=`shuf -i 0-59 -n 1`
 	sed "s|HOMEDIR|$home_dir|g" ${home_dir}/tejo/common/monitoring/cron.job|sed "s|MIN|$min|g" > /tmp/cron.job
 	install_cron_job "wlrtt.py" "/tmp/cron.job"
+	
+	sed "s|HOMEDIR|$home_dir|g" "${home_dir}/contrib/pl/cron.job"|sed "s|HOMEDIR|$home_dir|g" > /tmp/cron.job
+	install_cron_job "peering_wrapper.sh" "/tmp/cron.job"
 }
 
 install_paping ()
@@ -547,7 +550,6 @@ case "$node_type" in
                 ;;
         "workload")
 				echo -n "(2) installing ganglia for workload..."
-				sudo sed -i "s|WL_TARGET|$aggregator|g" /etc/tejo.conf 
                 install_ganglia_monitor "$node_location" "$node_type" "$aggregator"
                 install_workload_cron
                 

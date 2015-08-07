@@ -563,7 +563,7 @@ case "$node_type" in
                 install_workload_cron
                 #getting rtt once
 				python `get_home_dir`/tejo/common/monitoring/wlrtt.py
-                
+                touch `get_parameter mongo_active_wl_file`
 				echo " (2) done."
                 ;;
         *)

@@ -524,6 +524,7 @@ echo "node_location:$node_location"
 
 echo -n "(0) installing basic packages..."
 install_basic_packages_fedora
+get_tejo
 get_yanoama
 install_paping
 #get_tejo

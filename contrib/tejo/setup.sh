@@ -558,6 +558,8 @@ case "$node_type" in
 				echo -n "(2) installing ganglia for workload..."
                 install_ganglia_monitor "$node_location" "$node_type" "$aggregator"
                 install_workload_cron
+                #getting rtt once
+				python `get_home_dir`/tejo/common/monitoring/wlrtt.py
                 
 				echo " (2) done."
                 ;;

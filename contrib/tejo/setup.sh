@@ -324,6 +324,9 @@ install_workload_cron()
 	
 	sed "s|HOMEDIR|$home_dir|g" "${home_dir}/contrib/pl/cron.job"|sed "s|HOMEDIR|$home_dir|g" > /tmp/cron.job
 	install_cron_job "peering_wrapper.sh" "/tmp/cron.job"
+
+	sed "s|HOMEDIR|$home_dir|g" "${home_dir}/contrib/pl/croncheck.job" > /tmp/cron.job
+	install_cron_job "check_workload.sh" "/tmp/cron.job"
 }
 
 install_paping ()

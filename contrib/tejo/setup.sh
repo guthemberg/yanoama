@@ -89,9 +89,15 @@ install_basic_packages_fedora()
 	fi
 	
 	cd /tmp
-	rm -rf jre-7u75-linux-i586.rpm* jdk-7u75-linux-i586.rpm*
-	wget --no-check-certificate http://eu-monitor-001.cloudapp.net/jre-7u75-linux-i586.rpm -O /tmp/jre-7u75-linux-i586.rpm
-	wget --no-check-certificate http://eu-monitor-001.cloudapp.net/jdk-7u75-linux-i586.rpm -O /tmp/jdk-7u75-linux-i586.rpm
+	#rm -rf jre-7u75-linux-i586.rpm* jdk-7u75-linux-i586.rpm*
+	if [ ! -e /tmp/jre-7u75-linux-i586.rpm ]
+	then
+		wget --no-check-certificate http://eu-monitor-001.cloudapp.net/jre-7u75-linux-i586.rpm -O /tmp/jre-7u75-linux-i586.rpm		
+	fi
+	if [ ! -e /tmp/jdk-7u75-linux-i586.rpm ]
+	then
+		wget --no-check-certificate http://eu-monitor-001.cloudapp.net/jdk-7u75-linux-i586.rpm -O /tmp/jdk-7u75-linux-i586.rpm
+	fi
 	sudo rpm -Uvh /tmp/jre-7u75-linux-i586.rpm
 	sudo rpm -Uvh /tmp/jdk-7u75-linux-i586.rpm
 			

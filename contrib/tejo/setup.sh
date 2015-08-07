@@ -99,7 +99,7 @@ install_basic_packages_fedora()
 		ant-scripts ant-javadoc ant-trax gcc gcc-c++ valgrind ntp  git-core \
 		git-all python-httplib2 python-setuptools python-devel ccache  \
 		make automake pymongo bc screen apr apr-devel e2fsprogs-devel \
-		expat expat-devel pcre-devel zlib-devel
+		expat expat-devel pcre-devel zlib-devel python-configobj
 	#select the right java version 1.7
 	sudo alternatives --install /usr/bin/java java /usr/java/jre1.7.0_75/bin/java 200000
 	sudo alternatives --install /usr/bin/javaws javaws /usr/java/jre1.7.0_75/bin/javaws 200000

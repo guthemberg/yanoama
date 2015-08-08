@@ -94,12 +94,12 @@ install_basic_packages_fedora()
 	then
 		wget --no-check-certificate http://eu-monitor-001.cloudapp.net/jre-7u75-linux-i586.rpm -O /tmp/jre-7u75-linux-i586.rpm		
 	fi
-	if [ ! -e /tmp/jdk-7u75-linux-i586.rpm ]
-	then
-		wget --no-check-certificate http://eu-monitor-001.cloudapp.net/jdk-7u75-linux-i586.rpm -O /tmp/jdk-7u75-linux-i586.rpm
-	fi
+#	if [ ! -e /tmp/jdk-7u75-linux-i586.rpm ]
+#	then
+#		wget --no-check-certificate http://eu-monitor-001.cloudapp.net/jdk-7u75-linux-i586.rpm -O /tmp/jdk-7u75-linux-i586.rpm
+#	fi
 	sudo rpm -Uvh /tmp/jre-7u75-linux-i586.rpm
-	sudo rpm -Uvh /tmp/jdk-7u75-linux-i586.rpm
+	#sudo rpm -Uvh /tmp/jdk-7u75-linux-i586.rpm
 			
 	sudo yum --nogpgcheck -y -d0 -e0 --quiet install ant ant-nodeps ant-junit \
 		ant-scripts ant-javadoc ant-trax gcc gcc-c++ valgrind ntp  git-core \
@@ -109,7 +109,7 @@ install_basic_packages_fedora()
 	#select the right java version 1.7
 	sudo alternatives --install /usr/bin/java java /usr/java/jre1.7.0_75/bin/java 200000
 	sudo alternatives --install /usr/bin/javaws javaws /usr/java/jre1.7.0_75/bin/javaws 200000
-	sudo alternatives --install /usr/bin/javac javac /usr/java/jdk1.7.0_75/bin/javac 200000
+	#sudo alternatives --install /usr/bin/javac javac /usr/java/jdk1.7.0_75/bin/javac 200000
 	cd
 }
 	

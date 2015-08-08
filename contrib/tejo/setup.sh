@@ -223,6 +223,10 @@ install_ganglia_monitor()
 			sudo cp /etc/ganglia/gmond.conf /etc/ganglia/gmond.conf.original
 		fi
 		gmond_conf_dir=`/usr/sbin/gmond -t|grep conf.d|cut -f2 -d\'|cut -f1-4 -d/`
+		if [ ! -d "$gmond_conf_dir" ]
+		then
+			gmond_conf_dir=`/usr/sbin/gmond -t|grep conf.d|cut -f2 -d\"|cut -f1-4 -d/`
+		fi
 		cp ${home_dir}/contrib/fedora/ganglia/gmond.conf.sample /tmp/gmond.conf.1
 
 	else

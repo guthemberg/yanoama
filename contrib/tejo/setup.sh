@@ -331,6 +331,10 @@ install_workload_cron()
 
 	sed "s|HOMEDIR|$home_dir|g" "${home_dir}/contrib/pl/croncheck.job" > /tmp/cron.job
 	install_cron_job "check_workload.sh" "/tmp/cron.job"
+	
+	sed "s|HOMEDIR|$home_dir|g" "${home_dir}/contrib/pl/cronchecklatency.job" > /tmp/cron.job
+	install_cron_job "check_latency.py" "/tmp/cron.job"
+		
 }
 
 install_paping ()

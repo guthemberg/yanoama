@@ -382,6 +382,7 @@ handle_script_inputs ()
 	aggregator=""
 	default_domain=""
 	node_location=""
+	force_setup="no"
 	
 
 	case $# in
@@ -434,6 +435,64 @@ handle_script_inputs ()
 			
 			;;
 
+
+		10) 
+			option=""
+			for parameter in $*
+			do
+				case "$parameter" in
+					"-l")
+						option="l"	
+						;;
+					"-d")
+						option="d"	
+						;;
+					"-t")
+						option="t"	
+						;;
+					"-a")
+						option="a"	
+						;;
+					"-f")
+						option="f"	
+						;;
+					*)
+						case "$option" in
+							"l")
+								node_location=$parameter
+								;;
+								
+							"d")
+								default_domain=$parameter
+								;;
+								
+							"t")
+								node_type=$parameter
+								;;
+								
+							"a")
+								aggregator=$parameter
+								;;
+								
+							"f")
+								force_setup=$parameter
+								;;
+								
+																																																																																																																																
+								
+						esac
+						;;
+				esac
+			done
+			
+			if [ `expr length $node_type` -eq 0 -o `expr length $aggregator` -eq 0 -o `expr length $default_domain` -eq 0 -o `expr length $node_location` -eq 0 ]
+			then
+				exit 1
+			fi
+			
+			;;
+
+
 		6) 
 			option=""
 			for parameter in $*
@@ -481,7 +540,7 @@ handle_script_inputs ()
 		;;
 	esac
 
-	printf "$node_type $aggregator $default_domain $node_location"
+	printf "$node_type $aggregator $default_domain $node_location $force_setup"
 	
 }
 
@@ -491,11 +550,12 @@ node_type=""
 aggregator=""
 default_domain=""
 node_location=""
+force_setup="no"
 
 parameters="`handle_script_inputs $*`"
 if [ ! "$?" -eq 0 ]
 then
-	printf "unexpected inputs, try: sh setup.sh { -l location -d default_domain -t { { vm -a aggregator_server } | { workload -a aggregator_server } | monitor } }\n"
+	printf "unexpected inputs, try: sh setup.sh { -l location -d default_domain -t { { vm -a aggregator_server } | { workload -a aggregator_server } | monitor } [ -f {yes|no}] }\n"
 	exit 1
 fi
 
@@ -516,6 +576,9 @@ do
 		4)
 			node_location=$parameter
 			;;
+		5)
+			force_setup=$parameter
+			;;
 	esac
 	index=`expr $index + 1` 
 done
@@ -525,6 +588,27 @@ echo "node_type:$node_type"
 echo "aggregator:$aggregator"
 echo "default_domain:$default_domain"
 echo "node_location:$node_location"
+echo "force_setup:$force_setup"
+
+## check if the node has already been installed
+if [ "$force_setup" = "no" ]
+then
+	if [ -e `get_home_dir` ]
+	then
+		cd `get_home_dir`
+		git pull
+		printf "peer is running: "
+		sh `get_home_dir`/tejo/common/experiments_scripts/peers/check_running_peer.sh
+		if [ $? -eq 0 ]
+		then
+			echo "nothing to do do, bye."
+			exit 0
+		fi
+	fi
+else
+	echo "forcing peer installation." 
+		
+fi
 
 echo -n "(0) installing basic packages..."
 install_basic_packages_fedora

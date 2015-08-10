@@ -605,13 +605,28 @@ then
 		sh `get_home_dir`/tejo/common/experiments_scripts/peers/check_running_peer.sh
 		if [ $? -eq 0 ]
 		then
-			echo "nothing to do do, bye."
+			echo "KO, nothing to do do (if you may want to force a setup, try -f yes param), bye."
 			exit 0
+		else
+			echo "OK."
 		fi
 	fi
+	#checking if node id dead
+	if [ -e $workload_death_file ]
+	then
+			printf "check peer liveness: "
+	        state=`python -c "import pickle;import sys ; sys.stdout.write(str(pickle.load( open( '$workload_death_file', 'rb' ) )))"`
+	        if [ $state = "True" ]
+	        then
+				echo "KO, peer is dead (if you may want to force a setup, try -f yes param), bye."
+				exit 0
+			else
+				echo "OK."
+			fi
+	fi
 else
+	rm $workload_death_file	
 	echo "forcing peer installation." 
-		
 fi
 
 echo -n "(0) installing basic packages..."

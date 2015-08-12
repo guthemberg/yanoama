@@ -687,6 +687,7 @@ case "$node_type" in
 				python `get_home_dir`/tejo/common/monitoring/wlrtt.py
 				sh `get_home_dir`/tejo/common/experiments_scripts/ycsb/stop.sh
                 touch `get_parameter mongo_active_wl_file`
+                /bin/sh /home/`whoami`/tejo/contrib/pl/check_workload.sh 
 				echo " (2) done."
                 ;;
         *)

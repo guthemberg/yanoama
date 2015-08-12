@@ -612,18 +612,28 @@ then
 		fi
 
 	#checking if node id dead
-		if [ -e $workload_death_file ]
+		if [ -e /etc/tejo.conf ]
 		then
+			workload_death_file=`grep workload_death_file /etc/tejo.conf|cut -d= -f2`
+			if [ -e $workload_death_file ]
+			then
 				printf "check peer liveness: "
 		        state=`python -c "import pickle;import sys ; sys.stdout.write(str(pickle.load( open( '$workload_death_file', 'rb' ) )))"`
-		        if [ $state = "True" ]
+		        if [ $? -eq 0 ]
 		        then
-		        	sh `get_home_dir`/tejo/common/experiments_scripts/ycsb/stop.sh
-					echo "KO, peer is dead (if you may want to force a setup, try -f yes param), bye."
-					exit 0
-				else
-					echo "OK."
-				fi
+			        if [ $state = "True" ]
+			        then
+			        	sh `get_home_dir`/tejo/common/experiments_scripts/ycsb/stop.sh
+						echo "KO, peer is dead (if you may want to force a setup, try -f yes param), bye."
+						exit 0
+					else
+						echo "OK."
+					fi		        	
+		        fi
+			fi
+			
+			
+			
 		fi
 	fi
 else

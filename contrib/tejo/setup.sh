@@ -637,9 +637,11 @@ then
 		fi
 	fi
 else
-	rm $workload_death_file	
-	echo "forcing peer installation." 
+		echo "forcing peer installation." 
 fi
+
+rm /tmp/*.pck
+rm /home/`whoami`/*.pck
 
 echo -n "(0) installing basic packages..."
 install_basic_packages_fedora

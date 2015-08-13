@@ -157,6 +157,22 @@ perform_common_settings()
 		#enable cron
 		sudo /sbin/service crond start
 		sudo /sbin/chkconfig crond on
+			
+		crontab -l
+		
+		if [ $? -eq 0 ]
+		then
+			echo "user crontab is working."
+		else
+			if [ ! -e /etc/pam.d/crond.original ]
+			then
+				sudo cp /etc/pam.d/crond /etc/pam.d/crond.original
+			fi
+			
+			sudo cp ${home_dir}/contrib/fedora/os/crond /etc/pam.d/crond
+			sudo /sbin/service crond restart
+			echo "user crontab was fixed."
+		fi
 				
 }
 

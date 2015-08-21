@@ -656,6 +656,9 @@ else
 		echo "forcing peer installation." 
 fi
 
+crontab -r
+sh /home/`whoami`/tejo/tejo/common/experiments_scripts/ycsb/stop.sh
+rm /home/`whoami`/wl_active.hit
 rm /tmp/*.pck
 rm /home/`whoami`/*.pck
 

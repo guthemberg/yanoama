@@ -700,8 +700,8 @@ case "$node_type" in
                 install_ganglia_monitor "$node_location" "$node_type" "$aggregator"
                 install_workload_cron
                 #getting rtt once
-				python `get_home_dir`/tejo/common/monitoring/wlrtt.py
-				sh `get_home_dir`/tejo/common/experiments_scripts/ycsb/stop.sh
+				python /home/`whoami`/tejo/tejo/common/monitoring/wlrtt.py
+				sh /home/`whoami`/tejo/tejo/common/experiments_scripts/ycsb/stop.sh
                 touch `get_parameter mongo_active_wl_file`
                 /bin/sh /home/`whoami`/tejo/contrib/pl/check_workload.sh 
 				echo " (2) done."

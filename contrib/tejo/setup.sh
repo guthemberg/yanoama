@@ -610,51 +610,58 @@ echo "default_domain:$default_domain"
 echo "node_location:$node_location"
 echo "force_setup:$force_setup"
 
-## check if the node has already been installed
-if [ "$force_setup" = "no" ]
+if [ `pgrep -f gmond|wc -l` -lt 1 ]
 then
-	if [ -e `get_home_dir` ]
+	
+	## check if the node has already been installed
+	if [ "$force_setup" = "no" ]
 	then
-		cd `get_home_dir`
-		git pull
-		printf "peer is running: "
-		sh `get_home_dir`/tejo/common/experiments_scripts/peers/check_running_peer.sh
-		if [ $? -eq 0 ]
+		if [ -e `get_home_dir` ]
 		then
-			echo "KO, nothing to do do (if you may want to force a setup, try -f yes param), bye."
-			exit 0
-		else
-			echo "OK."
-		fi
-
-	#checking if node id dead
-		if [ -e /etc/tejo.conf ]
-		then
-			workload_death_file=`grep workload_death_file /etc/tejo.conf|cut -d= -f2`
-			if [ -e $workload_death_file ]
+			cd `get_home_dir`
+			git pull
+			printf "peer is running: "
+			sh `get_home_dir`/tejo/common/experiments_scripts/peers/check_running_peer.sh
+			if [ $? -eq 0 ]
 			then
-				printf "check peer liveness: "
-		        state=`python -c "import pickle;import sys ; sys.stdout.write(str(pickle.load( open( '$workload_death_file', 'rb' ) )))"`
-		        if [ $? -eq 0 ]
-		        then
-			        if [ $state = "True" ]
-			        then
-			        	sh `get_home_dir`/tejo/common/experiments_scripts/ycsb/stop.sh
-						echo "KO, peer is dead (if you may want to force a setup, try -f yes param), bye."
-						exit 0
-					else
-						echo "OK."
-					fi		        	
-		        fi
+				echo "KO, nothing to do do (if you may want to force a setup, try -f yes param), bye."
+				exit 0
+			else
+				echo "OK."
 			fi
-			
-			
-			
+	
+	#checking if node id dead
+			if [ -e /etc/tejo.conf ]
+			then
+				workload_death_file=`grep workload_death_file /etc/tejo.conf|cut -d= -f2`
+				if [ -e $workload_death_file ]
+				then
+					printf "check peer liveness: "
+			        state=`python -c "import pickle;import sys ; sys.stdout.write(str(pickle.load( open( '$workload_death_file', 'rb' ) )))"`
+			        if [ $? -eq 0 ]
+			        then
+				        if [ $state = "True" ]
+				        then
+				        	sh `get_home_dir`/tejo/common/experiments_scripts/ycsb/stop.sh
+							echo "KO, peer is dead (if you may want to force a setup, try -f yes param), bye."
+							exit 0
+						else
+							echo "OK."
+						fi		        	
+			        fi
+				fi
+				
+				
+				
+			fi
 		fi
+	else
+			echo "forcing peer installation." 
 	fi
-else
-		echo "forcing peer installation." 
+		
+	
 fi
+
 
 crontab -r
 sh /home/`whoami`/tejo/tejo/common/experiments_scripts/ycsb/stop.sh

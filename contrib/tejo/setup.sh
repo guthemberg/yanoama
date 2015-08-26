@@ -610,7 +610,7 @@ echo "default_domain:$default_domain"
 echo "node_location:$node_location"
 echo "force_setup:$force_setup"
 
-if [ `pgrep -f gmond|wc -l` -lt 1 ]
+if [ `pgrep -f gmond|wc -l` -gt 0 ]
 then
 	
 	## check if the node has already been installed

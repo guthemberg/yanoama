@@ -29,7 +29,7 @@ if __name__ == '__main__':
     print "a sample node: "    
     for node in ple_nodes:
         print node
-        print getHostSite(node)
+        print ple.getHostSite(node)
         sys.exit(0)
     sys.exit(0)
 

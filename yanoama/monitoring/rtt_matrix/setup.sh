@@ -30,8 +30,7 @@ install_basic_packages_fedora()
 
 get_yanoama()
 {
-	cd
-	home_dir=`pwd`/yanoama	
+	home_dir=$1	
 	if [ -d "$home_dir" ]; then
 		cd $home_dir
 		git pull
@@ -50,9 +49,6 @@ generate_pythonrc()
 
 perform_common_settings()
 {
-
-FIX THE HOME DIR and CROND before continueing
-
 		home_dir=$1
 		#sudo update-rc.d cron defaults
 		
@@ -73,7 +69,7 @@ FIX THE HOME DIR and CROND before continueing
 				sudo cp /etc/pam.d/crond /etc/pam.d/crond.original
 			fi
 			
-			sudo cp ${home_dir}/contrib/fedora/os/crond /etc/pam.d/crond
+			sudo cp ${home_dir}/monitoring/rtt_matrix/pl_fedora/crond /etc/pam.d/crond
 			sudo /sbin/service crond restart
 			echo "user crontab was fixed."
 		fi
@@ -81,18 +77,42 @@ FIX THE HOME DIR and CROND before continueing
 }
 
 #main
+
+#this fetches informations about nodes that will
+#compute the rtt matrix then setup each one of them
+#this requires a key and a file /etc/ple.conf (ple
+#credentials)
+
+
+key=${HOME}/.ssh/id_rsa_cloud
+yanoama_home_dir=/home/upmc_aren/yanoama
+local_yanoama_home_dir=$yanoama_home_dir
+ple_conf=/etc/ple.conf
+
+if [ $HOME = '/home/upmc_aren' ]
+then
+	install_basic_packages_fedora
+	#	get_yanoama $yanoama_home_dir
+else
+	local_yanoama_home_dir=${HOME}/git/yanoama	
+fi
+
+python ${local_yanoama_home_dir}/yanoama/monitoring/fetch_ple_info.py
+
+exit 0
+
+
 target=$1
-key=/home/`whoami`/.ssh/id_rsa_cloud
 cd
-home_dir=`pwd`/yanoama
 
 ssh -i $key -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o ConnectTimeout=5 -o ServerAliveInterval=5 $target "pwd"
 if [ $? -eq 0 ]
 then
 	install_basic_packages_fedora
 	get_yanoama
-	python ${home_dir}/yanoama/monitoring/compute_rtt_matrix.py
-	install_cron_job "compute_rtt_matrix.py" "${home_dir}/yanoama/monitoring/cron.job"
+	python ${yanoama_home_dir}/yanoama/monitoring/compute_rtt_matrix.py
+	perform_common_settings "$yanoama_home_dir"
+	install_cron_job "compute_rtt_matrix.py" "${yanoama_home_dir}/yanoama/monitoring/cron.job"
 fi
 
 echo "performing $vm..."

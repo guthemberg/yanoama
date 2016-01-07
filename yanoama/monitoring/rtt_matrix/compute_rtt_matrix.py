@@ -7,7 +7,8 @@ from subprocess import PIPE, Popen
 
 
 
-def getRTT(hostname):
+def getRTT(hostname,homedir):
+    script_path=homedir+"/yanoama/yanoama/monitoring/get_rtt.sh"
     try:
         return (float(Popen("sh "+"/home/upmc_aren/yanoama/monitoring/get_rtt.sh "+hostname, stdout=PIPE,shell=True).communicate()[0]))
     except:
@@ -23,7 +24,7 @@ def load_object_from_file(input_file):
 
 
 #main
-
+homedir=sys.argv[1]
 myhostname=(socket.gethostname())
 matrix_file="/home/upmc_aren/rtt_matrix.pck"
 matrix=None

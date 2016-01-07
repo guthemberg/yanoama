@@ -1,4 +1,4 @@
-import pickle,sys,socket,subprocess,os,git,random
+import pickle,sys,socket,subprocess,os,random
 from datetime import datetime
 from time import time
 #from planetlab import Monitor

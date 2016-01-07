@@ -109,6 +109,7 @@ cd
 ssh -i $key -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o ConnectTimeout=5 -o ServerAliveInterval=5 $target "pwd"
 if [ $? -eq 0 ]
 then
+	FIX THIS CALLS, THEY SHOULD BE DONE INTO THE REMOTE NODE
 	install_basic_packages_fedora
 	get_yanoama
 	python ${yanoama_home_dir}/yanoama/monitoring/compute_rtt_matrix.py

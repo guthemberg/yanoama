@@ -17,6 +17,7 @@ if __name__ == '__main__':
     
     yanoama_home_dir=sys.argv[1]
     ple_conf=sys.argv[2]
+    host_table_file=sys.argv[3]
     print "[%s]:update membership..."%(str(datetime.now()))    
     ple_lib_path=yanoama_home_dir+'/yanoama/planetlab'
     sys.path.append(ple_lib_path)
@@ -27,13 +28,22 @@ if __name__ == '__main__':
     ple_nodes=ple.getSliceHostnames(config['slice'])
 
     print "a sample node: "    
+    list_of_login_bases=[]
+    host_table={}
+    list_of_nodes=""
     for node in ple_nodes:
-        print node
-        print ple.getHostSite(node)
-        sys.exit(0)
+        site_info=ple.getHostSite(node)
+        if site_info['login_base'] not in list_of_login_bases:
+            host_table[node]=site_info
+            list_of_nodes=node+" "
+            
+    print "list size: "+str(len(host_table))
+    sys.stdout.write(list_of_nodes)
+    print ""
+    save_object_to_file(host_table, host_table_file)
     sys.exit(0)
 
-    matrix_file="/home/upmc_aren/rtt_matrix.pck"
+    matrix_file="/home/upmc_aren/host_table.pck"
     matrix={}
     
     for node in ple_nodes:

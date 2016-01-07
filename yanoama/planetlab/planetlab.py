@@ -52,7 +52,7 @@ class PlanetLabAPI:
 
     def getHostSite(self,hostname):
         site_id = int((self.api.GetNodes(self.auth,hostname,['site_id']))[0]['site_id'])
-        return (self.api.GetSites(self.auth,site_id,['login_base','name']))[0]
+        return (self.api.GetSites(self.auth,site_id,['login_base','name','peer_id','longitude','latitude']))[0]
         
     def update(self,expire_time):
         return (self.api.UpdateSlice(self.auth,'upmc_aren',{'expires':expire_time}))

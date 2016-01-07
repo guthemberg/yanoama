@@ -88,6 +88,7 @@ key=${HOME}/.ssh/id_rsa_cloud
 yanoama_home_dir=/home/upmc_aren/yanoama
 local_yanoama_home_dir=$yanoama_home_dir
 ple_conf=/etc/ple.conf
+host_table_file="/home/upmc_aren/host_table.pck"
 
 if [ $HOME = '/home/upmc_aren' ]
 then
@@ -98,7 +99,7 @@ else
 	local_yanoama_home_dir=${HOME}/git/yanoama	
 fi
 
-python ${local_yanoama_home_dir}/yanoama/monitoring/rtt_matrix/fetch_ple_info.py "$yanoama_home_dir" "$ple_conf"
+python ${local_yanoama_home_dir}/yanoama/monitoring/rtt_matrix/fetch_ple_info.py "$yanoama_home_dir" "$ple_conf" "$host_table_file"
 
 exit 0
 

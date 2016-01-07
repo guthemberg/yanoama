@@ -91,6 +91,7 @@ ple_conf=/etc/ple.conf
 
 if [ $HOME = '/home/upmc_aren' ]
 then
+	pwd
 	# install_basic_packages_fedora
 	#	get_yanoama $yanoama_home_dir
 else

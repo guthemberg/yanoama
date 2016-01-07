@@ -98,7 +98,7 @@ else
 	local_yanoama_home_dir=${HOME}/git/yanoama	
 fi
 
-python ${local_yanoama_home_dir}/yanoama/monitoring/fetch_ple_info.py
+python ${local_yanoama_home_dir}/yanoama/monitoring/rtt_matrix/fetch_ple_info.py
 
 exit 0
 

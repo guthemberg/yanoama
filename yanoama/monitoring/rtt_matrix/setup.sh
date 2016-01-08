@@ -100,9 +100,11 @@ else
 	local_yanoama_home_dir=${HOME}/git/yanoama	
 fi
 
-printf "fetching list of nodes: "
+printf "fetching list of nodes... "
 list_of_nodes=`python ${local_yanoama_home_dir}/yanoama/monitoring/rtt_matrix/fetch_ple_info.py "$yanoama_home_dir" "$ple_conf" "$host_table_file"`
-
+number_of_nodes=`printf $list_of_nodes|tr -cd ' '| wc -c`
+number_of_nodes=`expr $number_of_nodes - 1`
+echo "there are $number_of_nodes nodes."
 
 
 #counter=0

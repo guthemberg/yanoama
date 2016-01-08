@@ -94,9 +94,9 @@ host_table_file="/home/${myuser}/host_table.pck"
 
 install_basic_packages_fedora
 get_yanoama $yanoama_home_dir
+python ${yanoama_home_dir}/yanoama/monitoring/rtt_matrix/compute_rtt_matrix.py $host_table_file
 exit 0
 get_yanoama $yanoama_home_dir
-python ${yanoama_home_dir}/yanoama/monitoring/rtt_matrix/compute_rtt_matrix.py
 
 
 if [ $HOME = '/home/upmc_aren' ]

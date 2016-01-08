@@ -98,6 +98,7 @@ then
 	#	get_yanoama $yanoama_home_dir
 else
 	local_yanoama_home_dir=${HOME}/git/yanoama	
+	host_table_file="${HOME}/host_table.pck"
 fi
 
 printf "fetching list of nodes... "

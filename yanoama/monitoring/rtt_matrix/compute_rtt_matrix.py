@@ -49,8 +49,10 @@ for peer in host_table:
         matrix[peer]=-1
     if peer != myhostname:
         rtt=getRTT(peer,yanoama_homedir)
-        if rtt > 0:
-            if matrix[peer] > 0 and matrix[peer]>rtt:
+        if rtt > 0.0:
+            if matrix[peer] <= 0.0:
+                matrix[peer]=rtt
+            elif matrix[peer]>rtt:
                 matrix[peer]=rtt
     print "done."
     

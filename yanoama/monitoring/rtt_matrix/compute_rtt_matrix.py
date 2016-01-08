@@ -24,7 +24,7 @@ def load_object_from_file(input_file):
 
 
 #main
-yanoama_homedir=load_object_from_file(sys.argv[1])
+yanoama_homedir=(sys.argv[1])
 host_table=load_object_from_file(sys.argv[2])
 myhostname=(socket.gethostname())
 matrix_file="/home/upmc_aren/"+myhostname+"_rtt_matrix.pck"

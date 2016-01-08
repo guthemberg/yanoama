@@ -40,8 +40,11 @@ else:
         matrix[node]=-1
     
 
-
+total_nodes=len(host_table)
+prepered_nodes=1
 for peer in host_table:
+    sys.stdout.write('(%d/%d)%s: '%(prepered_nodes,total_nodes,peer))
+    prepered_nodes=prepered_nodes+1
     if peer not in matrix:
         matrix[peer]=-1
     if peer != myhostname:
@@ -49,6 +52,7 @@ for peer in host_table:
         if rtt > 0:
             if matrix[peer] > 0 and matrix[peer]>rtt:
                 matrix[peer]=rtt
+    print "done."
     
 save_object_to_file(matrix, matrix_file)
 

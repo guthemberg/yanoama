@@ -85,13 +85,16 @@ perform_common_settings()
 
 
 key=${HOME}/.ssh/id_rsa_cloud
-yanoama_home_dir=/home/upmc_aren/yanoama
+myuser='upmc_aren'
+yanoama_home_dir=/home/${myuser}/yanoama
 local_yanoama_home_dir=$yanoama_home_dir
 ple_conf=/etc/ple.conf
-host_table_file="/home/upmc_aren/host_table.pck"
+host_table_file="/home/${myuser}/host_table.pck"
 
 
 install_basic_packages_fedora
+get_yanoama $yanoama_home_dir
+exit 0
 get_yanoama $yanoama_home_dir
 python ${yanoama_home_dir}/yanoama/monitoring/rtt_matrix/compute_rtt_matrix.py
 

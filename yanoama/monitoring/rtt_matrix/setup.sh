@@ -85,12 +85,13 @@ perform_common_settings()
 
 
 key=${HOME}/.ssh/id_rsa_cloud
-yanoama_home_dir=/home/upmc_aren/yanoama
+myuser='upmc_aren'
+yanoama_home_dir=/home/${myuser}/yanoama
 local_yanoama_home_dir=$yanoama_home_dir
 ple_conf=/etc/ple.conf
-host_table_file="/home/upmc_aren/host_table.pck"
+host_table_file="/home/${myuser}/host_table.pck"
 
-if [ $HOME = '/home/upmc_aren' ]
+if [ $HOME = "/home/${myuser}" ]
 then
 	pwd
 	# install_basic_packages_fedora
@@ -103,26 +104,34 @@ list_of_nodes=`python ${local_yanoama_home_dir}/yanoama/monitoring/rtt_matrix/fe
 
 
 
-target=$1
+target="${myuser}@$1"
 cd
 
-counter=0
-for source in `printf "VMs workload monitor"`
+#counter=0
+ssh_test_cmd="ssh -i $key -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o ConnectTimeout=5 -o ServerAliveInterval=5 $target 'pwd'"
+ssh_cmd="ssh -i $key -o StrictHostKeyChecking=no -o PasswordAuthentication=no $target "
+ssh_credentials="-i $key -o StrictHostKeyChecking=no -o PasswordAuthentication=no"
+for source in `printf "$list_of_nodes"`
 do
-	ssh -i $key -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o ConnectTimeout=5 -o ServerAliveInterval=5 $target "pwd"
+	$ssh_test_cmd
 	if [ $? -eq 0 ]
 	then
-		FIX THIS CALLS, THEY SHOULD BE DONE INTO THE REMOTE NODE
+		scp $ssh_credentials ${yanoama_home_dir}/yanoama/monitoring/rtt_matrix/prepare.sh ${target}:/tmp/
+		scp $ssh_credentials host_table_file ${target}:/home/${myuser}/
+		$ssh_cmd "sh /tmp/prepare.sh"
+		
+		break
+		#FIX THIS CALLS, THEY SHOULD BE DONE INTO THE REMOTE NODE
 		install_basic_packages_fedora
 		get_yanoama
 		python ${yanoama_home_dir}/yanoama/monitoring/compute_rtt_matrix.py
 		perform_common_settings "$yanoama_home_dir"
 		install_cron_job "compute_rtt_matrix.py" "${yanoama_home_dir}/yanoama/monitoring/cron.job"
-		counter=`expr $counter + 1`
-		if [ $counter -eq 2 ]
-		then
+		#		counter=`expr $counter + 1`
+		#		if [ $counter -eq 2 ]
+		#		then
 			break
-		fi
+		#		fi
 	fi
 		
 done

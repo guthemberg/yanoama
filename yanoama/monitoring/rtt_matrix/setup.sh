@@ -101,7 +101,7 @@ else
 fi
 
 printf "fetching list of nodes... "
-list_of_nodes=`python ${local_yanoama_home_dir}/yanoama/monitoring/rtt_matrix/fetch_ple_info.py "$yanoama_home_dir" "$ple_conf" "$host_table_file"`
+list_of_nodes=`python ${local_yanoama_home_dir}/yanoama/monitoring/rtt_matrix/fetch_ple_info.py "${local_yanoama_home_dir}" "$ple_conf" "$host_table_file"`
 number_of_nodes=`printf "$list_of_nodes" | tr -cd ' '| wc -c`
 number_of_nodes=`expr $number_of_nodes - 1`
 echo "there are $number_of_nodes nodes."
@@ -116,7 +116,7 @@ do
 	ssh $ssh_credentials $ssh_test_parameters $target hostname
 	if [ $? -eq 0 ]
 	then
-		scp $ssh_credentials ${yanoama_home_dir}/yanoama/monitoring/rtt_matrix/prepare.sh ${target}:/tmp/
+		scp $ssh_credentials ${local_yanoama_home_dir}/yanoama/monitoring/rtt_matrix/prepare.sh ${target}:/tmp/
 		scp $ssh_credentials $host_table_file ${target}:/home/${myuser}/
 		ssh $ssh_credentials ${target} "sh /tmp/prepare.sh"
 		

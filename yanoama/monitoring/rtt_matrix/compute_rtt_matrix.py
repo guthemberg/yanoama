@@ -24,9 +24,9 @@ def load_object_from_file(input_file):
 
 
 #main
-host_table_file=load_object_from_file(sys.argv[1])
+host_table=load_object_from_file(sys.argv[1])
 myhostname=(socket.gethostname())
-matrix_file="/home/upmc_aren/rtt_matrix.pck"
+matrix_file="/home/upmc_aren/"+myhostname+"_rtt_matrix.pck"
 matrix=None
 if os.path.isfile(matrix_file):
     try:
@@ -34,13 +34,13 @@ if os.path.isfile(matrix_file):
     except:
         sys.exit(1)
 else:
-    matrix
-    for node in host_table_file:
+    matrix={}
+    for node in host_table:
         matrix[node]=-1
     
 
 
-for peer in host_table_file:
+for peer in host_table:
     if peer not in matrix:
         matrix[peer]=-1
     if peer != myhostname:

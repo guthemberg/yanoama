@@ -7,10 +7,10 @@ from subprocess import PIPE, Popen
 
 
 
-def getRTT(hostname,homedir):
-    script_path=homedir+"/yanoama/yanoama/monitoring/get_rtt.sh"
+def getRTT(hostname,yanoama_homedir):
+    script_path=yanoama_homedir+"/yanoama/monitoring/get_rtt.sh"
     try:
-        return (float(Popen("sh "+"/home/upmc_aren/yanoama/monitoring/get_rtt.sh "+hostname, stdout=PIPE,shell=True).communicate()[0]))
+        return (float(Popen("sh "+script_path+" "+hostname, stdout=PIPE,shell=True).communicate()[0]))
     except:
         return -1
 
@@ -24,7 +24,8 @@ def load_object_from_file(input_file):
 
 
 #main
-host_table=load_object_from_file(sys.argv[1])
+yanoama_homedir=load_object_from_file(sys.argv[1])
+host_table=load_object_from_file(sys.argv[2])
 myhostname=(socket.gethostname())
 matrix_file="/home/upmc_aren/"+myhostname+"_rtt_matrix.pck"
 matrix=None
@@ -44,7 +45,7 @@ for peer in host_table:
     if peer not in matrix:
         matrix[peer]=-1
     if peer != myhostname:
-        rtt=getRTT(peer)
+        rtt=getRTT(peer,yanoama_homedir)
         if rtt > 0:
             if matrix[peer] > 0 and matrix[peer]>rtt:
                 matrix[peer]=rtt

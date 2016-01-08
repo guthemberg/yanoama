@@ -121,6 +121,8 @@ do
 		ssh $ssh_credentials ${target} "sh /tmp/prepare.sh"
 		
 		break
+		
+
 		#FIX THIS CALLS, THEY SHOULD BE DONE INTO THE REMOTE NODE
 		install_basic_packages_fedora
 		get_yanoama

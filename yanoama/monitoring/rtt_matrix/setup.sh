@@ -121,20 +121,6 @@ do
 		scp $ssh_credentials $host_table_file ${target}:/home/${myuser}/
 		ssh $ssh_credentials ${target} "sh /tmp/prepare.sh"
 		
-		break
-		
-
-		#FIX THIS CALLS, THEY SHOULD BE DONE INTO THE REMOTE NODE
-		install_basic_packages_fedora
-		get_yanoama
-		python ${yanoama_home_dir}/yanoama/monitoring/compute_rtt_matrix.py
-		perform_common_settings "$yanoama_home_dir"
-		install_cron_job "compute_rtt_matrix.py" "${yanoama_home_dir}/yanoama/monitoring/cron.job"
-		#		counter=`expr $counter + 1`
-		#		if [ $counter -eq 2 ]
-		#		then
-			break
-		#		fi
 	fi
 		
 done

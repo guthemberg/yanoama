@@ -100,25 +100,23 @@ else
 	local_yanoama_home_dir=${HOME}/git/yanoama	
 fi
 
+printf "fetching list of nodes: "
 list_of_nodes=`python ${local_yanoama_home_dir}/yanoama/monitoring/rtt_matrix/fetch_ple_info.py "$yanoama_home_dir" "$ple_conf" "$host_table_file"`
 
 
 
-target="${myuser}@$1"
-cd
-
 #counter=0
-ssh_test_cmd="ssh -i $key -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o ConnectTimeout=5 -o ServerAliveInterval=5 $target 'pwd'"
-ssh_cmd="ssh -i $key -o StrictHostKeyChecking=no -o PasswordAuthentication=no $target "
+ssh_test_parameters="-o ConnectTimeout=5 -o ServerAliveInterval=5"
 ssh_credentials="-i $key -o StrictHostKeyChecking=no -o PasswordAuthentication=no"
-for source in `printf "$list_of_nodes"`
+for node in `printf "$list_of_nodes"`
 do
-	$ssh_test_cmd
+	target="${myuser}@${node}"
+	ssh $ssh_credentials $ssh_test_parameters $target hostname
 	if [ $? -eq 0 ]
 	then
 		scp $ssh_credentials ${yanoama_home_dir}/yanoama/monitoring/rtt_matrix/prepare.sh ${target}:/tmp/
 		scp $ssh_credentials host_table_file ${target}:/home/${myuser}/
-		$ssh_cmd "sh /tmp/prepare.sh"
+		ssh $ssh_credentials ${target} "sh /tmp/prepare.sh"
 		
 		break
 		#FIX THIS CALLS, THEY SHOULD BE DONE INTO THE REMOTE NODE

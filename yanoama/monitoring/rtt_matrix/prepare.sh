@@ -69,7 +69,7 @@ perform_common_settings()
 				sudo cp /etc/pam.d/crond /etc/pam.d/crond.original
 			fi
 			
-			sudo cp ${home_dir}/monitoring/rtt_matrix/pl_fedora/crond /etc/pam.d/crond
+			sudo cp ${home_dir}/yanoama/monitoring/rtt_matrix/pl_fedora/crond_fixed /etc/pam.d/crond
 			sudo /sbin/service crond restart
 			echo "user crontab was fixed."
 		fi
@@ -94,6 +94,7 @@ host_table_file="/home/${myuser}/host_table.pck"
 
 install_basic_packages_fedora
 get_yanoama $yanoama_home_dir
+perform_common_settings $yanoama_home_dir
 python ${yanoama_home_dir}/yanoama/monitoring/rtt_matrix/compute_rtt_matrix.py ${yanoama_home_dir} $host_table_file
 min=`shuf -i 0-59 -n 1`
 sed "s|YANOAMAHOME|$yanoama_home_dir|g" ${yanoama_home_dir}/yanoama/monitoring/rtt_matrix/cron.job|sed "s|MIN|$min|g"|sed "s|HOSTTABLE|$host_table_file|g" > /tmp/cron.job

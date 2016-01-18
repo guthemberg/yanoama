@@ -32,6 +32,7 @@ if __name__ == '__main__':
     
     measuremants_dir=sys.argv[1]
     list_of_nodes=(sys.argv[2]).split(" ")
+    max_n_clusters=int(sys.argv[3]) 
 #    host_table=load_object_from_file(sys.argv[3])
     file_table_suffix="_rtt_matrix.pck"
     
@@ -45,12 +46,12 @@ if __name__ == '__main__':
     best_n=3
     best_mbk=None
     gain=0
-    last_inertia=0
-    initian_inertia=0
-    acc_gain=0
-    last_acc_gain=0
-    diff_acc_gain=0
-    for n_clusters in range(1,16):
+    last_inertia=0.0
+    initian_inertia=0.0
+    acc_gain=0.0
+    last_acc_gain=0.0
+    diff_acc_gain=0.0
+    for n_clusters in range(1,max_n_clusters):
         mbk = MiniBatchKMeans(init='k-means++', n_clusters=n_clusters, n_init=10, verbose=0)
         X=np.array(host_measurements,dtype=float)
         mbk.fit(X)
@@ -67,9 +68,10 @@ if __name__ == '__main__':
             gain=abs((inertia-last_inertia)/(last_inertia))
             acc_gain=abs((inertia-initian_inertia)/(initian_inertia))
             # WE NEED TO FIX THIS diff_
+            diff_acc_gain=(acc_gain-last_acc_gain)*100
             last_acc_gain=acc_gain
             last_inertia=mbk.inertia_
-        print "number of clusters: %d, inertia: %.4f, gain: %.4f, acc. gain: %.4f"%(n_clusters,mbk.inertia_,gain,acc_gain)
+        print "number of clusters: %d, inertia: %.4f, gain: %.4f, acc. gain: %.4f, diff acc gain: %.4f"%(n_clusters,mbk.inertia_,gain,acc_gain,diff_acc_gain)
     
     #save objects
     save_object_to_file(list_of_nodes, "/tmp/nodes_list.pck")

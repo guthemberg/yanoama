@@ -2,6 +2,8 @@
 
 workdir=$1
 script_dir=$2
+max_n_clusters=$3
+
 key=${HOME}/.ssh/id_rsa_cloud
 myuser='upmc_aren'
 
@@ -38,5 +40,5 @@ ls ${measurements_dir}/ |wc -l
 echo $total_number_of_existing_nodes
 #echo $existing_nodes
 
-python ${script_dir}/reload.py ${measurements_dir} "$existing_nodes"
+python ${script_dir}/reload.py ${measurements_dir} "$existing_nodes" $max_n_clusters
 exit 0

@@ -1,4 +1,4 @@
-import pickle,sys,os,socket
+import pickle,sys,os,socket,math
 from datetime import datetime
 from time import time
 #from planetlab import Monitor
@@ -24,6 +24,10 @@ def load_object_from_file(input_file):
 
 
 #main
+MAX_LENGTH=int(math.pow(2,20))
+#todo
+##get more information about the nodes and
+##especially, collect multiple information about the latencies
 yanoama_homedir=(sys.argv[1])
 host_table=load_object_from_file(sys.argv[2])
 myhostname=(socket.gethostname())
@@ -37,7 +41,9 @@ if os.path.isfile(matrix_file):
 else:
     matrix={}
     for node in host_table:
-        matrix[node]=-1
+        #legacy code, there was a single entry per node, the smallest measurements
+        #matrix[node]=-1
+        matrix[node]=[]
     
 
 total_nodes=len(host_table)
@@ -46,14 +52,26 @@ for peer in host_table:
     sys.stdout.write('(%d/%d)%s: '%(prepered_nodes,total_nodes,peer))
     prepered_nodes=prepered_nodes+1
     if peer not in matrix:
-        matrix[peer]=-1
+        #matrix[peer]=-1
+        matrix[peer]=[]
+    #it is not a list
+    if not isinstance(matrix[peer], list):
+        if isinstance(matrix[peer], (int,float,long)):
+            if matrix[peer] > 0.0:
+                mes=matrix[peer]
+                matrix[peer]=[mes]
+            else:
+                matrix[peer]=[]
+        else:
+            matrix[peer]=[]
+        
     if peer != myhostname:
         rtt=getRTT(peer,yanoama_homedir)
         if rtt > 0.0:
-            if matrix[peer] <= 0.0:
-                matrix[peer]=rtt
-            elif matrix[peer]>rtt:
-                matrix[peer]=rtt
+            if not len(matrix[peer])<MAX_LENGTH:
+                matrix[peer].pop(0)
+            (matrix[peer]).append(rtt)
+                
     print "done."
     
 save_object_to_file(matrix, matrix_file)

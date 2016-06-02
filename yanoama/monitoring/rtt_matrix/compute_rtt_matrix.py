@@ -24,7 +24,7 @@ def getMeasurements(hostname,yanoama_homedir,list_of_keys):
         measurements={}
         output_string=(Popen("sh "+script_path+" "+hostname, stdout=PIPE,shell=True).communicate()[0])
         index=0
-        for measurement in test_string.split(','):
+        for measurement in output_string.split(','):
             measurements[list_of_keys[index]]=float(measurement)
             index=index+1
         return measurements
@@ -51,7 +51,12 @@ def add_measurement_to_table(mytable,peer_key,list_of_keys,max_lentgh,measuremen
         measurement=measurements[list_key]      
         if not len(mytable[peer_key][list_key])<max_lentgh:
             (mytable[peer_key][list_key]).pop(0)
-        (mytable[peer_key][list_key]).append(measurement)
+        if list_key=='rtt' or list_key=='jitter':
+            if measurement>0.0:
+                (mytable[peer_key][list_key]).append(measurement)
+        elif measurement>=0.0 and measurement<=100.0:
+            #loss in percentage
+            (mytable[peer_key][list_key]).append(measurement)
     return mytable
     
 

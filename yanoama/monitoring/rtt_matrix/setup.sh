@@ -79,7 +79,7 @@ perform_common_settings()
 #main
 
 #this fetches informations about nodes that will
-#compute the rtt matrix then setup each one of them
+#compute the rtt, loss, jitter matrix then setup each one of them
 #this requires a key and a file /etc/ple.conf (ple
 #credentials)
 
